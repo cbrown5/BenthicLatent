@@ -1,0 +1,8 @@
+.Rproj.user
+.Rhistory
+.RData
+SI_admin/
+old_versions/
+.DS_Store
+data/
+.docx

@@ -1,0 +1,72 @@
+# Estimating the footprint of pollution on coral reefs using models of species turn-over
+#Appendix S4
+#
+#JAGS code for fitting a model with constrained and unconstrained latent variables
+#
+# CJ Brown 22 Jun 2017
+#
+# The model was derived by modifying code from by the boral R package. See:
+# Francis K.C. Hui (2017). boral: Bayesian Ordination and Regression AnaLysis. R
+# package version 1.2. https://CRAN.R-project.org/package=boral
+
+
+model {
+
+	 ## Data Level ##
+	 for(i in 1:n) {
+	 	for (j in 1:p){
+		 	log(eta[i, j]) <- inprod(alpha[j,], nu[i,]) +
+			beta[j] * nuwq[i] +
+			int[j]
+		 	y[i,j] ~ dpois(eta[i, j])
+			}
+		}
+
+		#latent variable
+		 for (i in 1:n){
+		 	for (k in 1:num.lv){
+		 		nu[i, k] ~ dnorm(0.0,1)
+			}
+		}
+
+		#Constrained latent variable
+		for (i in 1:n){
+		   numean[i] <- (d[i] * gamma) + (flow[i] * gammaf)
+		   nuwq[i] ~ dnorm(numean[i],1)
+		}
+
+		 # WQ gradient latent variable effects
+		 gamma ~ dnorm(0, 0.001)
+	 	 gammaf ~ dnorm(0, 0.001)
+
+	 ## Process Level ##
+	 for(j in 1:p) {
+	 	int[j] ~ dnorm(0,tau) ## Separate species intercepts
+		beta[j] ~ dnorm(0, 0.05)
+		#check precision here appropriate value
+	 }
+
+
+	 # Random latent variables
+	 # Constraints to 0 on upper diagonal
+	 for(i in 1:(num.lv-1)) {
+	 	for(j in (i+1):num.lv){
+	  			alpha[i,j] <- 0
+				}}
+
+	# Sign constraints on diagonal elements
+	 for(i in 1:num.lv) {
+	 	alpha[i,i] ~ dunif(0,20)
+	 }
+
+	 # Free lower elements
+	 for(j in 1:num.lv) {
+	 for(i in (j+1):p) {
+	 	alpha[i,j] ~ dnorm(0,0.05)
+	 }}
+
+	 # Random intercept - precision
+	 tau <- pow(sigma, -2)
+	 sigma ~ dunif(0, 20)
+
+}

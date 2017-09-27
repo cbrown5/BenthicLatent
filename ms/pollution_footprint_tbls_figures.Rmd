@@ -1,0 +1,84 @@
+---
+output:
+  word_document:
+    reference_docx: word-styles-reference-consbiol.docx
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE)
+options(scipen=999)
+```
+
+
+```{r, eval = FALSE, echo=FALSE}
+# placeholder for reinstalling updated package
+devtools::build(pkg = "~/Code/BenthicLatent") #will overwrite exisiting .tar.gz file
+install.packages("~/Code/BenthicLatent_1.0.tar.gz", repos = NULL, type = "source")
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#library(BenthicLatent)
+devtools::load_all('~/Code/BenthicLatent')
+```
+
+# Tables 
+
+```{r}
+load("/Users/s2973410/Code/BenthicLatent/data-raw/BLM_numlv2_v3.RData")
+gamma_md <- jagstools::jagsresults(x = mcout3, params = c('gamma'))
+gammaf_md <- jagstools::jagsresults(x = mcout3, params = c('gammaf'))
+```
+
+
+```{r, echo=FALSE, dev='png', dev.args=list(pointsize=16), fig.width = 5}
+load('/Users/s2973410/Code/BenthicLatent/data-raw/waic.rda')
+load('/Users/s2973410/Code/BenthicLatent/data-raw/Secchi_correlation.rda')
+```
+
+
+*Table 1* Model comparison using the WAIC. LV: number of unconstrained latent variables.  
+
+Model                              | WAIC     |
+-----------------------------------|----------|
+Bayesian ordination, 2 LVs         |   `r round(waic_dat$waic_nodist)`  |
+Constrained model, 1 LV            |   `r round(waic_dat$waic[1])`  |
+Constrained model, 2 LV            |   `r round(waic_dat$waic[2])`  |
+Constrained model, 3 LV            |   `r round(waic_dat$waic[3])`  |
+Constrained model, 4 LV            |   `r round(waic_dat$waic[4])`  |
+
+# Figures
+
+```{r, echo=FALSE, dev='png', dev.args=list(pointsize=13), fig.width = 10, fig.height=7}
+create_model_diagram()
+```
+
+**Figure 1** Directed graph giving an example for the structure of our Bayesian latent variable model applied to coral reef habitats in Solomon Islands. Squares indicate measured variables,  circles indicate latent variables, variables in italics also have error terms that are estimated from the data. Arrows indicate model effects, with gray and black arrows indicating the effects relating to different latent variables. 
+
+
+```{r, echo=FALSE, dev='png', dev.args=list(pointsize=16), fig.width = 10, fig.height = 6}
+habitat_loadings_plot(file= '/Users/s2973410/Code/BenthicLatent/data-raw/BLM_numlv2_v3.RData', prows = 1, pcols=3)
+```
+
+**Figure 2** Mean estimates and CIs for loadings of each habitat category on the (a) constrained latent variable and (b-c) two unconstrained latent variables. Loading signs on the constrained latent variable (a) are fixed so that positive values indicate a habitat's cover increases further from log-ponds.
+
+
+```{r, echo=FALSE, dev='png', dev.args=list(pointsize=16), fig.width = 12, warning = F}
+hab_curve_plot('/Users/s2973410/Code/BenthicLatent/data-raw/BLM_numlv2_v3.RData')
+```
+
+**Figure 3** Cover against distance to nearest log-ponds for habitats with a significant response to the latent variable for water quality. Significant was defined as 95% CIs not overlapping zero.
+
+
+```{r}
+load('/Users/s2973410/Code/BenthicLatent/data-raw/area_reef_change.rda')
+```
+
+
+![](latentquantmap.png)
+
+**Figure 4** Map of study region showing log ponds, survey sites and probabilities that a reef is degraded. The spatial field shows the probability that benthic communities are degraded, calculated by taking a probit transform over the constrained latent variable. The probabilities are predicted to all ocean areas (not just lagoonal reefs) for visualisation purposes. Note that uncertainty on the probability field is broad, but is not shown here for visualisation purposes. 
+
+

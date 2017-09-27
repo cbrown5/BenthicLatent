@@ -1,0 +1,3043 @@
+lc1 <- inla.make.lincombs(#
+            yearnorm = c(-1, rep(NA, nsamples-2), 1),#
+            region.num = AA#
+        )
+inla.make.lincombs
+lc1 <- inla.make.lincombs(#
+            yearnorm = c(-1, rep(NA, nsamples-2), 1)#
+        )
+lc1
+ynmat
+lc1 <- inla.make.lincombs(#
+            yearnorm = ynmat#
+        )
+lc1
+form1
+lc1 <- inla.make.lincombs(#
+            yearnorm = ynmat,#
+            region.num = AA#
+        )
+lc1
+system.time(#
+        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
+            lincomb = lc1,#
+        	control.predictor = list(compute = TRUE, link = 1),#
+        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
+    )
+1- exp(m1$summary.lincomb.derived)
+regnums
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(5038, 5041),4]))
+m1$summary.linear.predictor
+datmod1
+1- exp(m1$summary.lincomb.derived)
+datextra
+filter(datextra, region.num ==1)
+filter(datextra, region.num ==1) %>% data.frame()
+datmod1[c(nrow(dattemp)+1, nrow(dattemp)+37),]
+c(nrow(dattemp)+1, nrow(dattemp)+37)
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+1- exp(m1$summary.lincomb.derived)
+m1$summary.lincomb.derived
+lc1 <- inla.make.lincomb(#
+            yearnorm = c(-1, rep(NA, nsamples-2), 1), #
+            region.num = c(1, rep(NA, length = nregions-1))#
+        )
+system.time(#
+        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
+            lincomb = lc1,#
+        	control.predictor = list(compute = TRUE, link = 1),#
+        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
+    )
+349/60
+108/60
+exp(m1$summary.lincomb.derived)
+1- exp(m1$summary.lincomb.derived)
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+lc2
+lc1
+datmod1$region.num
+class(datmod1$region.num)
+1- exp(m1$summary.lincomb.derived)
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+lc1
+c(1, rep(NA, length = nregions-1))
+c(-1, rep(NA, nsamples-2), 1)
+unique(datmod2$yearnorm)
+sort(unique(datmod2$yearnorm))
+filter(datextra, region.num ==1) %>% data.frame()
+years <- sort(unique(datmod1$yearnorm))
+years
+thisreg <- filter(datextra, region.num ==1)
+thisreg
+which(years == min(thisreg$yearnorm))
+thisreg <- filter(datextra, region.num ==1)#
+    ifirst <- which(years == min(thisreg$yearnorm))#
+    lincombyears <- rep(NA, length(years))#
+    lincombyears[ifirst] <- -1#
+    lincombyears[length(years)] <- 1
+lincombyears
+lc1 <- inla.make.lincomb(#
+            yearnorm = lincombyears,#
+            region.num = c(1, rep(NA, length = nregions-1))#
+        )#
+#
+    lc2 <- inla.make.lincomb(#
+        yearnorm = c(-1, rep(NA, nsamples-2), 1))#
+#
+    # ---------------#
+    # Fit models#
+    # ---------------#
+#
+    #About 2 minutes if we have region and site effects#
+    system.time(#
+        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
+            lincomb = lc1,#
+        	control.predictor = list(compute = TRUE, link = 1),#
+        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
+    )
+datmod1[c(nrow(dattemp)+1, nrow(dattemp)+37),]#
+    filter(datextra, region.num ==1) %>% data.frame()#
+    1- exp(m1$summary.lincomb.derived)#
+    1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+m1$summary.lincomb.derived
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+thisgroup
+databund
+filter(datuse, region.num ==1)
+1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
+1- exp(m1$summary.lincomb.derived)
+m1$summary.lincomb.derived
+1100+200+100+500+100
+1100+200+100+550+50
+rm(list = ls())#
+library(dplyr)#
+library(corrplot)#
+library(igraph)#
+library(vegan)#
+library(sp)#
+library(rgeos)#
+library(PlotTools)#
+library(RColorBrewer)#
+library(purrr)#
+#
+##
+# Data#
+##
+#
+load('/Users/s2973410/Code/IIT/EC_species.RData')#
+load('/Users/s2973410/Code/IIT/EC_data.RData')#
+load('/Users/s2973410/Code/IIT/ECsites.RData')#
+#
+##
+# PA data for common species #
+##
+pamat <- ecpa#
+spnamscommon <- as.character(ecsp$comnam)#
+nsites <- nrow(pamat)#
+nspp <- ncol(pamat)#
+nstates <- 2^nspp#
+##
+# Models #
+##
+nlats <- 20#
+preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
+#
+pout <- matrix(NA, nrow = nlats, ncol = nspp)#
+pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
+plower <- matrix(NA, nrow = nlats, ncol = nspp)#
+#
+for (ispp in 1:nspp){#
+	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
+	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
+	pout[,ispp] <- pred$fit#
+	pupper[,ispp] <- pred$fit + pred$se.fit#
+	plower[,ispp] <- pred$fit- pred$se.fit#
+}
+#All possible communities#
+commfun <- function(nspp2){#
+	nstates <- 2^nspp2#
+	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
+	commsinv <- 1-comms#
+	return(list(comms = comms, commsinv = commsinv))#
+	}#
+#
+#Probability of each community assuming species are independent#
+pfun <- function(i, xin, nstates, p){#
+	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
+	probs <- abs(xin$commsinv - pmat)#
+	apply(probs, 2, prod) #probability of each community#
+}#
+#
+shannon <- function(p){#
+	-sum(p * log2(p))#
+	}#
+kldiv <- <- function(p,q){#
+	-sum(p * log2(p/q))#
+	}#
+#
+helldist <- function(p1, p2){#
+	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
+	}
+# Look at entropy as a measure of beta-diveristy for my east coast example species#
+# CJ Brown 28 Dec 2016  #
+#
+rm(list = ls())#
+library(dplyr)#
+library(corrplot)#
+library(igraph)#
+library(vegan)#
+library(sp)#
+library(rgeos)#
+library(PlotTools)#
+library(RColorBrewer)#
+library(purrr)#
+#
+##
+# Data#
+##
+#
+load('/Users/s2973410/Code/IIT/EC_species.RData')#
+load('/Users/s2973410/Code/IIT/EC_data.RData')#
+load('/Users/s2973410/Code/IIT/ECsites.RData')#
+#
+##
+# PA data for common species #
+##
+pamat <- ecpa#
+spnamscommon <- as.character(ecsp$comnam)#
+nsites <- nrow(pamat)#
+nspp <- ncol(pamat)#
+nstates <- 2^nspp#
+##
+# Models #
+##
+nlats <- 20#
+preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
+#
+pout <- matrix(NA, nrow = nlats, ncol = nspp)#
+pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
+plower <- matrix(NA, nrow = nlats, ncol = nspp)#
+#
+for (ispp in 1:nspp){#
+	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
+	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
+	pout[,ispp] <- pred$fit#
+	pupper[,ispp] <- pred$fit + pred$se.fit#
+	plower[,ispp] <- pred$fit- pred$se.fit#
+}#
+#
+##
+# Functions for entropy
+#All possible communities#
+commfun <- function(nspp2){#
+	nstates <- 2^nspp2#
+	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
+	commsinv <- 1-comms#
+	return(list(comms = comms, commsinv = commsinv))#
+	}
+#Probability of each community assuming species are independent#
+pfun <- function(i, xin, nstates, p){#
+	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
+	probs <- abs(xin$commsinv - pmat)#
+	apply(probs, 2, prod) #probability of each community#
+}
+shannon <- function(p){#
+	-sum(p * log2(p))#
+	}#
+kldiv <- <- function(p,q){#
+	-sum(p * log2(p/q))#
+	}
+kldiv <- function(p,q){#
+	-sum(p * log2(p/q))#
+	}
+helldist <- function(p1, p2){#
+	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
+	}
+xout <- commfun(nspp)#
+#
+latdists <- map(1:nlats, ~pfun(.x, xout, nstates, pout))#
+latdists_upp <- map(1: nlats, ~pfun(.x, xout, nstates, pupper))#
+latdists_low <- map(1: nlats, ~pfun(.x, xout, nstates, plower))#
+#
+# Shannon entropy of states #
+en_lats <- map(latdists, shannon) %>% unlist()#
+en_lats_up <- map(latdists_upp, shannon) %>% unlist()#
+en_lats_low <- map(latdists_low, shannon) %>% unlist()
+#This plot suggests I can calculate entropy directly from sp probs. #
+par(mfrow =c (1,2))#
+plot(apply(pout, 1, shannon), en_lats, type = 'l')
+en_lats
+# psout <-pmax(pout, 1-pout)*pmin(pout, 1-pout) #should be able to be simplifed something like thi? #
+psout <- ((1-pout) * pout)*(1/8)#
+cor(en_lats, apply(psout, 1, shannon))
+par(mfrow =c (1,2))#
+plot(apply(pout, 1, shannon), en_lats, type = 'l')
+en_lats
+apply(psout, 1, shannon)
+plot(apply(pout, 1, shannon), apply(psout, 1, shannon), type = 'l')
+#equation not quite right, see notebook. #
+enshort <- function(p){#
+	n <- length(p)#
+	x <- rep(NA, n)#
+	for (i in 1:n){#
+		x[i] <- p[i]*log2((p[i] * prod(1-p[-i])) / (prod(1-p)))		#
+		}#
+	log2(prod(1-p)) + sum(x)#
+	# sum(log2(1-p)) + #
+	# sum((p * (log2(p) + sum(log2(1-p) - log2(1-p)))) - #
+	# sum(log2(1-p)))#
+	}
+p2 <- pout[,1:2]#
+#
+xout2 <- commfun(2)#
+latdists2 <- map(1:nlats, ~pfun(.x, xout2, 4, p2))#
+# Shannon entropy of states #
+en_lats2 <- map(latdists2, shannon) %>% unlist()
+par(mfrow =c (1,2))#
+plot(apply(p2, 1, shannon), en_lats2, type = 'l')#
+plot(apply(p2, 1, enshort), en_lats2, type = 'l')
+# Try simplify this:  #
+# pq * log2(pq) + (1-p)q*log2((1-p)q) + (1-q)p*log2((1-q)p) (1-q)(1-p)*log2((1-p)(1-q))#
+p*q * log(p*q) + (1-p)*q*log((1-p)*q) + (1-q)*p*log((1-q)*p) + (1-q)*(1-p)*log((1-p)*(1-q))
+beta <- matrix(NA, nrow = nlats, ncol = 2)#
+beta_up <- matrix(NA, nrow = nlats, ncol = 2)#
+beta_low <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+bin <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+for (i in 2:(nlats-1)){#
+	# State-entropy#
+	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
+	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
+	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
+	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
+#
+	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
+	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
+#
+	#Pairwise Bray-Curtis #
+	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
+	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
+	}
+beta_av <- apply(beta, 1, mean)#
+beta_av_up <- apply(beta_up, 1, mean)#
+beta_av_low <- apply(beta_low, 1, mean)#
+binav <- apply(bin, 1, mean)
+par(mfrow = c(2,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)
+plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+lines(preddat$SiteLat, beta_av_up, lty = 2)#
+lines(preddat$SiteLat, beta_av_low, lty = 2)
+# Slope of the binomial is similar to my entropy measure, why is this?  #
+# plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
+par(mfrow = c(2,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
+helldist
+?vetdist
+?vegdist
+beta_low
+helldist
+bin <- matrix(NA, nrow = nlats, ncol = 2)#
+jac <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+for (i in 2:(nlats-1)){#
+#
+	# State-entropy#
+	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
+	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
+#
+	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
+	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
+#
+	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
+	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
+#
+	#Pairwise Bray-Curtis#
+	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
+	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
+#
+	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
+	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
+	}
+beta_av <- apply(beta, 1, mean)#
+beta_av_up <- apply(beta_up, 1, mean)#
+beta_av_low <- apply(beta_low, 1, mean)#
+binav <- apply(bin, 1, mean)#
+jacav <- apply(jac, 1, mean)#
+##
+# Plots#
+##
+#
+par(mfrow = c(2,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+lines(preddat$SiteLat, beta_av_up, lty = 2)#
+lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+# plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
+par(mfrow = c(2,3))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+lines(preddat$SiteLat, beta_av_up, lty = 2)#
+lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+ plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
+par(mfrow = c(2,3))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+lines(preddat$SiteLat, beta_av_up, lty = 2)#
+lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
+par(mfrow = c(2,3))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(jacav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
+par(mfrow = c(3,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(jacav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
+par(mfrow = c(3,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
+?vegdist
+# Look at entropy as a measure of beta-diveristy for my east coast example species#
+# CJ Brown 28 Dec 2016#
+#
+rm(list = ls())#
+library(dplyr)#
+library(corrplot)#
+library(igraph)#
+library(vegan)#
+library(sp)#
+library(rgeos)#
+library(PlotTools)#
+library(RColorBrewer)#
+library(purrr)#
+#
+##
+# Data#
+##
+#
+load('/Users/s2973410/Code/IIT/EC_species.RData')#
+load('/Users/s2973410/Code/IIT/EC_data.RData')#
+load('/Users/s2973410/Code/IIT/ECsites.RData')#
+#
+##
+# PA data for common species#
+##
+pamat <- ecpa#
+spnamscommon <- as.character(ecsp$comnam)#
+nsites <- nrow(pamat)#
+nspp <- ncol(pamat)#
+nstates <- 2^nspp#
+##
+# Models#
+##
+nlats <- 20#
+preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
+#
+pout <- matrix(NA, nrow = nlats, ncol = nspp)#
+pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
+plower <- matrix(NA, nrow = nlats, ncol = nspp)#
+#
+for (ispp in 1:nspp){#
+	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
+	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
+	pout[,ispp] <- pred$fit#
+	pupper[,ispp] <- pred$fit + pred$se.fit#
+	plower[,ispp] <- pred$fit- pred$se.fit#
+}#
+#
+##
+# Functions for entropy#
+##
+#
+#All possible communities#
+commfun <- function(nspp2){#
+	nstates <- 2^nspp2#
+	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
+	commsinv <- 1-comms#
+	return(list(comms = comms, commsinv = commsinv))#
+	}#
+#
+#Probability of each community assuming species are independent#
+pfun <- function(i, xin, nstates, p){#
+	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
+	probs <- abs(xin$commsinv - pmat)#
+	apply(probs, 2, prod) #probability of each community#
+}#
+#
+shannon <- function(p){#
+	-sum(p * log2(p))#
+	}#
+#
+kldiv <- function(p,q){#
+	-sum(p * log2(p/q))#
+	}#
+#
+helldist <- function(p1, p2){#
+	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
+	}#
+#
+##
+# State-distributions for each latitude#
+##
+#
+xout <- commfun(nspp)#
+#
+latdists <- map(1:nlats, ~pfun(.x, xout, nstates, pout))#
+latdists_upp <- map(1: nlats, ~pfun(.x, xout, nstates, pupper))#
+latdists_low <- map(1: nlats, ~pfun(.x, xout, nstates, plower))#
+#
+# Shannon entropy of states#
+en_lats <- map(latdists, shannon) %>% unlist()#
+en_lats_up <- map(latdists_upp, shannon) %>% unlist()#
+en_lats_low <- map(latdists_low, shannon) %>% unlist()#
+#This plot suggests I can calculate entropy directly from sp probs.#
+par(mfrow =c (1,2))#
+plot(apply(pout, 1, shannon), en_lats, type = 'l')#
+#
+# psout <-pmax(pout, 1-pout)*pmin(pout, 1-pout) #should be able to be simplifed something like thi?#
+psout <- ((1-pout) * pout)*(1/8)#
+cor(en_lats, apply(psout, 1, shannon))#
+#
+plot(apply(pout, 1, shannon), apply(psout, 1, shannon), type = 'l')#
+#
+#equation not quite right, see notebook.#
+enshort <- function(p){#
+	n <- length(p)#
+	x <- rep(NA, n)#
+	for (i in 1:n){#
+		x[i] <- p[i]*log2((p[i] * prod(1-p[-i])) / (prod(1-p)))#
+		}#
+	log2(prod(1-p)) + sum(x)#
+	# sum(log2(1-p)) +#
+	# sum((p * (log2(p) + sum(log2(1-p) - log2(1-p)))) -#
+	# sum(log2(1-p)))#
+	}#
+p2 <- pout[,1:2]#
+#
+xout2 <- commfun(2)#
+latdists2 <- map(1:nlats, ~pfun(.x, xout2, 4, p2))#
+# Shannon entropy of states#
+en_lats2 <- map(latdists2, shannon) %>% unlist()#
+par(mfrow =c (1,2))#
+plot(apply(p2, 1, shannon), en_lats2, type = 'l')#
+plot(apply(p2, 1, enshort), en_lats2, type = 'l')#
+#
+# plot(en_lats, apply(psout, 1, shannon))#
+# Try simplify this:#
+# pq * log2(pq) + (1-p)q*log2((1-p)q) + (1-q)p*log2((1-q)p) (1-q)(1-p)*log2((1-p)(1-q))#
+p*q * log(p*q) + (1-p)*q*log((1-p)*q) + (1-q)*p*log((1-q)*p) + (1-q)*(1-p)*log((1-p)*(1-q))#
+##
+# Beta-diversity#
+##
+#
+beta <- matrix(NA, nrow = nlats, ncol = 2)#
+beta_up <- matrix(NA, nrow = nlats, ncol = 2)#
+beta_low <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+bin <- matrix(NA, nrow = nlats, ncol = 2)#
+jac <- matrix(NA, nrow = nlats, ncol = 2)#
+chao <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+for (i in 2:(nlats-1)){#
+#
+	# State-entropy#
+	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
+	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
+#
+	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
+	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
+#
+	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
+	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
+#
+	#Pairwise Bray-Curtis#
+	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
+	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
+#
+	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
+	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
+#
+	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'chao')#
+	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'chao')#
+	}#
+#
+beta_av <- apply(beta, 1, mean)#
+beta_av_up <- apply(beta_up, 1, mean)#
+beta_av_low <- apply(beta_low, 1, mean)#
+binav <- apply(bin, 1, mean)#
+jacav <- apply(jac, 1, mean)#
+chaoav <- apply(chao, 1, mean)#
+#
+##
+# Plots#
+##
+#
+par(mfrow = c(3,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
+plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
+chaoav
+chao
+bin <- matrix(NA, nrow = nlats, ncol = 2)#
+jac <- matrix(NA, nrow = nlats, ncol = 2)#
+chao <- matrix(NA, nrow = nlats, ncol = 2)#
+#
+for (i in 2:(nlats-1)){#
+#
+	# State-entropy#
+	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
+	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
+#
+	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
+	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
+#
+	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
+	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
+#
+	#Pairwise Bray-Curtis#
+	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
+	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
+#
+	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
+	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
+#
+	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'raup')#
+	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'raup')#
+	}#
+#
+beta_av <- apply(beta, 1, mean)#
+beta_av_up <- apply(beta_up, 1, mean)#
+beta_av_low <- apply(beta_low, 1, mean)#
+binav <- apply(bin, 1, mean)#
+jacav <- apply(jac, 1, mean)#
+chaoav <- apply(chao, 1, mean)#
+#
+##
+# Plots#
+##
+#
+par(mfrow = c(3,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
+plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
+betadiver(pout[c(i, i+1),], method = 1)
+pout[c(i, i+1),]
+commdat[commdat>0.5] <- 1
+commdat <- pout[c(i, i+1),]
+commdat[commdat>0.5] <- 1
+commdat[commdat <= 0.5] <- 0
+commdat
+betadiver(pout[c(i, i+1),], method = 1)
+betadiver(commdat, method = 1)
+betadiver(t(commdat), method = 1)
+betadiver(commdat, method = 1)
+betadiver(commdat, method = 2)
+betadiver(commdat, method = 3)
+betadiver(commdat, method = 4)
+commdat
+commdat[1,1]<-0
+betadiver(commdat, method = 4)
+betadiver(commdat, method = 1)
+}2
+betadiver(commdat, method = 2)
+betadiver(commdat, method = 11)
+bin <- matrix(NA, nrow = nlats, ncol = 2)#
+jac <- matrix(NA, nrow = nlats, ncol = 2)#
+chao <- matrix(NA, nrow = nlats, ncol = 2)#
+soren <- rep(NA, nlats)#
+for (i in 2:(nlats-1)){#
+#
+	# State-entropy#
+	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
+	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
+#
+	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
+	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
+#
+	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
+	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
+#
+	#Pairwise Bray-Curtis#
+	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
+	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
+#
+	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
+	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
+#
+	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'raup')#
+	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'raup')#
+	commdat <- pout[c(i, i+1),]#
+	commdat[commdat>0.5] <- 1#
+	commdat[commdat <= 0.5] <- 0#
+	soren[i] <- betadiver(commdat, method = 11)#
+	}
+soren
+beta_av <- apply(beta, 1, mean)#
+beta_av_up <- apply(beta_up, 1, mean)#
+beta_av_low <- apply(beta_low, 1, mean)#
+binav <- apply(bin, 1, mean)#
+jacav <- apply(jac, 1, mean)#
+chaoav <- apply(chao, 1, mean)#
+#
+##
+# Plots#
+##
+#
+par(mfrow = c(3,2))#
+plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
+lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
+lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
+abline(v = -30)#
+#Communities more random at mid-latitudes#
+#
+plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
+lines(preddat$SiteLat, beta[,2], lty = 3)#
+lines(preddat$SiteLat, beta_av)#
+abline(v = -30)#
+#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
+#
+#average with std errors#
+#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
+#lines(preddat$SiteLat, beta_av_up, lty = 2)#
+#lines(preddat$SiteLat, beta_av_low, lty = 2)#
+#
+# Slope of the binomial is similar to my entropy measure, why is this?#
+plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
+plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
+#
+plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
+plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
+plot(preddat$SiteLat, soren, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
+ls()
+620*4
+1020223/7
+69/7.25
+2*3*438.9
+10/15
+11/15
+20/25
+# Fish habitat Kobe plot#
+# CJ Brown 2017-08-15#
+# v2 has change in q#
+#
+rm(list = ls())#
+#
+library(ggplot2)#
+library(dplyr)#
+#
+schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
+    y <- numeric(t)#
+	y[1] <- yinit#
+	Catch <- rep(NA, t)#
+	Fmort <- numeric(t)#
+	Fmort[1] <- Finit#
+#
+	for(i in 1:(t-1)){#
+        if (which.mgmt == "bmsy"){#
+        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
+            } else {#
+        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
+        }#
+        Catch[i] <- Fmort[i] * q[i] * y[i]#
+        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
+		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
+	}#
+    return(list(y = y, Fmort = Fmort, Catch = Catch))#
+}#
+#
+#Function to specify exponential decline in a parameter to a limit#
+explimfun <- function(t, arate, mindec){#
+    initf <- exp(arate * t)#
+    (initf + mindec) - (initf*mindec)#
+}#
+#
+##
+# Simulations#
+##
+K <- 3#
+rbase <- 0.2#
+qbase <- 1#
+Emax <- 0.4#
+Fmsy <- rbase/(qbase*2)#
+Bmsy <- K/2#
+MSY <- rbase*K/4#
+tmax <- 200#
+a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
+x <- 0.2#
+Finit <- 0.2#
+Yinit <- Bmsy/2#
+#
+rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
+rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
+Fmsyr <- rdecline[tmax]/(qbase*2)#
+Knochange <- rep(K, tmax)#
+Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
+BmsyK <- Kdecline[tmax]/2#
+qnochange <- rep(qbase, tmax)#
+qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
+#plot(qincrease)#
+Fmsyq <- rbase/(qincrease[tmax]*2)#
+#
+nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
+nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
+nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
+nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+#
+nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
+nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
+##
+# Plot Kobe plot#
+##
+mycols <- colorRampPalette(c("grey90", "grey10"))#
+#
+dev.new(width = 6, height = 6)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
+abline(h = 1)#
+abline(v = 1)#
+text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
+text(0.5, 2.21, "Overfished and declining")#
+text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
+text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
+#
+dev.new(width = 8, height = 12)#
+par(mfrow = c(3,2))#
+plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#dev.new(width = 8, height = 12)#
+ppi <- 300#
+png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
+    width = 6*ppi, height = 10*ppi)#
+#
+par(mfrow = c(3,2))#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+dev.off()#
+######################
+#
+dev.new(width = 8, height = 4)#
+par(mfrow = c(1,3))#
+plot(nbase$Fmort, nbase$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+plot(nrdecline$Fmort, nrdecline$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+plot(nkdecline$Fmort, nkdecline$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+#
+dev.new(width = 8, height = 6)#
+par(mfrow = c(3,2))#
+plot(1:tmax, nbase$y, type = 'l')#
+plot(1:tmax, nbase$Fmort, type = 'l')#
+plot(1:tmax, nrdecline$y, type = 'l')#
+plot(1:tmax, nrdecline$Fmort, type = 'l')#
+plot(1:tmax, nkdecline$y, type = 'l')#
+plot(1:tmax, nkdecline$Fmort, type = 'l')
+# Fish habitat Kobe plot#
+# CJ Brown 2017-08-15#
+# v2 has change in q#
+#
+rm(list = ls())#
+#
+library(ggplot2)#
+library(dplyr)#
+#
+schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
+    y <- numeric(t)#
+	y[1] <- yinit#
+	Catch <- rep(NA, t)#
+	Fmort <- numeric(t)#
+	Fmort[1] <- Finit#
+#
+	for(i in 1:(t-1)){#
+        if (which.mgmt == "bmsy"){#
+        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
+            } else {#
+        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
+        }#
+        Catch[i] <- Fmort[i] * q[i] * y[i]#
+        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
+		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
+	}#
+    return(list(y = y, Fmort = Fmort, Catch = Catch))#
+}#
+#
+#Function to specify exponential decline in a parameter to a limit#
+explimfun <- function(t, arate, mindec){#
+    initf <- exp(arate * t)#
+    (initf + mindec) - (initf*mindec)#
+}#
+#
+##
+# Simulations#
+##
+K <- 3#
+rbase <- 0.2#
+qbase <- 1#
+Emax <- 0.4#
+Fmsy <- rbase/(qbase*2)#
+Bmsy <- K/2#
+MSY <- rbase*K/4#
+tmax <- 200#
+a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
+x <- 0.2#
+Finit <- 0.2#
+Yinit <- Bmsy/2#
+#
+rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
+rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
+Fmsyr <- rdecline[tmax]/(qbase*2)#
+Knochange <- rep(K, tmax)#
+Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
+BmsyK <- Kdecline[tmax]/2#
+qnochange <- rep(qbase, tmax)#
+qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
+#plot(qincrease)#
+Fmsyq <- rbase/(qincrease[tmax]*2)#
+#
+nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
+nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
+nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
+nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+#
+nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
+nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
+##
+# Plot Kobe plot#
+##
+mycols <- colorRampPalette(c("grey90", "grey10"))#
+#
+dev.new(width = 6, height = 6)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
+abline(h = 1)#
+abline(v = 1)#
+text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
+text(0.5, 2.21, "Overfished and declining")#
+text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
+text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
+#
+dev.new(width = 8, height = 12)#
+par(mfrow = c(3,2))#
+plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#dev.new(width = 8, height = 12)#
+ppi <- 300#
+png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
+    width = 6*ppi, height = 10*ppi)#
+#
+par(mfrow = c(3,2))#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+dev.off()
+# Fish habitat Kobe plot#
+# CJ Brown 2017-08-15#
+# v2 has change in q#
+#
+rm(list = ls())#
+#
+library(ggplot2)#
+library(dplyr)#
+#
+schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
+    y <- numeric(t)#
+	y[1] <- yinit#
+	Catch <- rep(NA, t)#
+	Fmort <- numeric(t)#
+	Fmort[1] <- Finit#
+#
+	for(i in 1:(t-1)){#
+        if (which.mgmt == "bmsy"){#
+        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
+            } else {#
+        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
+        }#
+        Catch[i] <- Fmort[i] * q[i] * y[i]#
+        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
+		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
+	}#
+    return(list(y = y, Fmort = Fmort, Catch = Catch))#
+}#
+#
+#Function to specify exponential decline in a parameter to a limit#
+explimfun <- function(t, arate, mindec){#
+    initf <- exp(arate * t)#
+    (initf + mindec) - (initf*mindec)#
+}#
+#
+##
+# Simulations#
+##
+K <- 3#
+rbase <- 0.2#
+qbase <- 1#
+Emax <- 0.4#
+Fmsy <- rbase/(qbase*2)#
+Bmsy <- K/2#
+MSY <- rbase*K/4#
+tmax <- 200#
+a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
+x <- 0.2#
+Finit <- 0.2#
+Yinit <- Bmsy/2#
+#
+rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
+rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
+Fmsyr <- rdecline[tmax]/(qbase*2)#
+Knochange <- rep(K, tmax)#
+Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
+BmsyK <- Kdecline[tmax]/2#
+qnochange <- rep(qbase, tmax)#
+qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
+#plot(qincrease)#
+Fmsyq <- rbase/(qincrease[tmax]*2)#
+#
+nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
+nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
+nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
+nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+#
+nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
+nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
+##
+# Plot Kobe plot#
+##
+mycols <- colorRampPalette(c("grey90", "grey10"))#
+#
+dev.new(width = 6, height = 6)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
+abline(h = 1)#
+abline(v = 1)#
+text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
+text(0.5, 2.21, "Overfished and declining")#
+text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
+text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
+#
+dev.new(width = 8, height = 12)#
+par(mfrow = c(3,2))#
+plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
+	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
+abline(h = 1)#
+abline(v = 1)#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
+abline(h = 1)#
+abline(v = 1)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
+abline(h = 1)#
+abline(v = 1)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#dev.new(width = 8, height = 12)#
+ppi <- 300#
+png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
+    width = 6*ppi, height = 10*ppi)#
+#
+par(mfrow = c(3,2))#
+#
+plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+#
+plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(h = 1, col = "red", lty = 2)#
+abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
+#
+plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
+abline(h = 1, lwd = 2)#
+abline(v = 1, lwd = 2)#
+abline(v = 1, col = "red", lty = 2)#
+abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
+#
+dev.off()#
+######################
+#
+dev.new(width = 8, height = 4)#
+par(mfrow = c(1,3))#
+plot(nbase$Fmort, nbase$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+plot(nrdecline$Fmort, nrdecline$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+plot(nkdecline$Fmort, nkdecline$Catch, type = 'l')#
+abline(v = Fmsy)#
+abline(h = MSY)#
+#
+dev.new(width = 8, height = 6)#
+par(mfrow = c(3,2))#
+plot(1:tmax, nbase$y, type = 'l')#
+plot(1:tmax, nbase$Fmort, type = 'l')#
+plot(1:tmax, nrdecline$y, type = 'l')#
+plot(1:tmax, nrdecline$Fmort, type = 'l')#
+plot(1:tmax, nkdecline$y, type = 'l')#
+plot(1:tmax, nkdecline$Fmort, type = 'l')
+(0.4 + 7.1 + 1.2 + 8.3)/36.6
+#CE schematic #
+#CJ Brown 22 Dec 2016  #
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot #
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Forest protected', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)	#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'), #
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved \n assuming equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved assuming \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.2, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+?par
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8), mgp = c(3,0.5, 0))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8), mgp = c(3,0.2, 0))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(3,0.2, 0))#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(3,0, 0))#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(1,0, 0))#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(1,0, 0))#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+#CE schematic#
+#CJ Brown 22 Dec 2016#
+#
+rm(list = ls())#
+#
+library(RColorBrewer)#
+#
+high <- c(1, 0, 0)#
+med <- c(0.7, 0.15, 0.15)#
+low <- c(1/3, 1/3, 1/3)#
+#
+budget <- 1/3#
+spend <- rep(budget, 3)#
+#
+outhigh <- sum(ifelse(high>budget, budget, high))#
+outmed <- sum(ifelse(med>budget, budget, med))#
+outlow <- sum(ifelse(low>budget, budget, low))#
+#
+outcomes <- c(outhigh, outmed, outlow)#
+#
+##
+# Plot#
+##
+x <- c(0.7, 1.9, 3.1)#
+xleft <- c(0.2, 1.4, 2.6)#
+xright <- c(1.2, 2.4, 3.6)#
+ylims <- c(0,1)#
+cols <- c('SeaGreen','LightBlue')#
+xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
+snames <- 1:3#
+#
+mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
+#
+dev.new(width =4, height = 3)#
+layout(mat)#
+#
+par(mar = c(3,2,2,2))#
+#
+barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
+rect(xleft, 0, xright, budget)#
+#
+barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
+rect(xleft, 0, xright, budget)#
+#
+par(mar = c(3,8,1,8))#
+#
+barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
+axis(2, at = c(0,1), labels = F)#
+#
+text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
+text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
+#
+labs <- c('High variation','Medium variation','Low variation')#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
+	}#
+#
+for (i in 1:3){#
+	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
+	}#
+#
+abline(h = 0.46, lty=2)#
+text(0.67, 0.64, 'Protection \n target')#
+#
+legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
+border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
+35.9/279.5
+37.8+18.%
+37.8+18.5
+log2(12)
+log(12)
+(0.5 * log2(0.5))
+(-0.5 * log2(0.5))
+log2(2^14)
+installed <- dir(.libPaths())
+installed
+save(installed, file = file.path("~/Code/", paste0(Sys.Date(), '-installed.Rdata')))
+library(INLA)
+install.packages("INLA", repos="https://inla.r-inla-download.org/R/stable")
+library(INLA)
+install.packages("sp")
+install.packages("matrix")
+install.packages("Matrix")
+library(INLA)
+15*((4*4))
+library(rjags
+)
+citation("rjags"0
+citation("rjags")
+# ----------------------------------------------- ##
+# Plot results for best model#
+# ----------------------------------------------- ##
+##
+# CJ Brown 17 Mar 2017#
+# v2 cleans up v1#
+#
+rm(list = ls())#
+library(purrr)#
+library(devtools)#
+library(jagstools)#
+library(tidyr)#
+library(ggplot2)#
+library(stringr)#
+library(PlotTools)#
+library(dplyr)#
+library(forcats)#
+library(sp)#
+library(rgdal)#
+library(raster)#
+load_all('~/Code/BenthicLatent')#
+#
+data(lv_input)#
+setwd('/Users/s2973410/Code/BenthicLatent/data-raw')#
+#
+num_levels <- 2#
+savname <- paste0('BLM_numlv', num_levels,'_v3.RData')#
+# ---------- ##
+# HABITAT LOADINGS PLOT#
+# ---------- ##
+#
+load(savname)#
+smc <- summary(mcout3)#
+ibeta <- grep("beta",dimnames(smc[[2]])[[1]])#
+isort <- order(smc[[2]][ibeta,3], decreasing = T)#
+smc[[2]][ibeta,3]#
+lv_input$habnams#
+dimnames(lv_input$y)[[2]]#
+#
+dev.new(width = 10, height = 5)#
+habitat_loadings_plot(savname, prows = 1, pcols = 3)
+habitat_loadings_plot
+dev.new(width = 10, height = 6)#
+habitat_loadings_plot(savname, prows = 1, pcols = 3)
+dev.new(width = 10, height = 4)#
+habitat_loadings_plot(savname, prows = 1, pcols = 3)
+#' Create flow diagram of model#
+#'#
+#' @author Christopher J. Brown#
+#' @rdname habitat_loadings_plot#
+#' @export#
+habitat_loadings_plot <- function(file, prows=2, pcols=2){#
+data(lv_input)#
+load(file = file)#
+#
+smcmn <- summary(mcout3)#
+#Weights on habitats#
+#
+dimnames(lv_input$y)[[2]]#
+habnams <- dimnames(lv_input$y)[[2]]#
+habnams_full <- lv_input$habnams_full$CATEGORY#
+nhabs <- length(habnams)#
+#
+#Number of LVs#
+colnams <- dimnames(mcout3[[1]])[[2]]#
+ialpha <- stringr::str_detect(colnams, 'alpha')#
+num_levels <- sum(ialpha)/nhabs#
+#
+par(mfrow = c(prows, pcols), mar = c(5,6,2,2))#
+iord <- plot_beta_mnm(smcmn, habnams_full, xlab = "Constrained LV")#
+par(mar = c(5,0.5,2,0.5))#
+purrr::walk(1:num_levels, ~plot_alpha_mnm(smcmn, habnams_full, lv =.x, nlv = num_levels, iord, xlab = paste("LV", .x)))#
+}
+dev.new(width = 10, height = 4)#
+habitat_loadings_plot(savname, prows = 1, pcols = 3)
+debug(hab_curve_plot)
+dev.new(width = 12, height = 5)
+hab_curve_plot(savname)
+n
+data(lv_input)#
+	data(bentbl)#
+	load(savnam)#
+#
+	#Covariates#
+	x <- lv_input$mindist#
+	flowind <- lv_input$flow#
+	n <- nrow(lv_input$y)#
+	nhabs <- ncol(lv_input$y)#
+	habnams <- dimnames(lv_input$y)[[2]]#
+#
+	colnams <- dimnames(mcout3[[1]])[[2]]#
+#
+	ialpha <- stringr::str_detect(colnams, 'alpha')#
+	ibeta <- stringr::str_detect(colnams, 'beta')#
+	iint <- stringr::str_detect(colnams, 'int')#
+	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
+	igamf <- stringr::str_detect(colnams, 'gammaf')#
+	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
+#
+	num_levels <- sum(ialpha)/nhabs#
+#
+	mcmat <- as.matrix(mcout3[[1]])#
+#
+	params <- list(alpha = mcmat[,ialpha],#
+	beta = mcmat[,ibeta],#
+	int = mcmat[,iint],#
+	gamma = mcmat[,igam],#
+	gammaf = mcmat[,igamf],#
+	nu = mcmat[,inu])#
+#
+	nsamp <- nrow(mcmat)#
+#
+	nx <- 20#
+	xvals <- seq(min(x), max(x), length.out = nx)#
+	predflow <- rep(0, nx)#
+#
+	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
+		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
+		purrr::transpose()#
+	#so this creates a list structured in order of - predval - sample - habitat.#
+#
+	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
+		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
+		data.frame()#
+		proppred <- df2/rowSums(df2)#
+		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
+		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
+		df3#
+	}#
+	smc <- summary(mcout3)#
+	betaquant <- smc$quantiles[ibeta,]#
+#
+	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
+	sighab <- habnams[issig]#
+	betainc <- betaquant[issig,3]#
+	datord <- data.frame(hab = habnams[issig], beta = betainc)#
+#
+	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
+#
+	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
+	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
+	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
+	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
+	dplyr::left_join(datord)#
+#
+	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
+	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
+	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
+	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
+	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
+	#Convert distances back to km#
+	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
+	# for (i in 1:length(sighab)){#
+		# df <- filter(dffilt, hab == sighab[i])#
+		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
+		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
+#
+		# }
+dffilt
+head(dffilt)
+lv_input$y
+data.frame(lv_input$y)
+head(dffilt)
+dffilt
+head(dffilt)
+dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover)
+dfhabs
+head(dffilt)
+dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		left_join(select(dffilt, hab, cat2))
+dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		left_join(dplyr::select(dffilt, hab, cat2))
+dfhabs
+head(dfhabs)
+names(lv_input)
+lv_input$mindists
+((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000
+dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000
+ggplot(dfhabs, aes(x = distkm, y = cover)) +#
+	geom_point() +#
+	facet_grid( ~ cat2)+
+ggplot(dfhabs, aes(x = distkm, y = cover)) +#
+	geom_point() +#
+	facet_grid( ~ cat2)
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)') +#
+	geom_point(data = dfhab)
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)') +#
+	geom_point(data = dfhabs)
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)') +#
+	geom_point(data = dfhabs, aes(y = cover))
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover)) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 1) +#
+	geom_line()
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey") +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+dfhabs
+nrow(dfhabs)
+dplyr::select(dffilt, hab, cat2)
+dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		left_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))
+dfhabs
+dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey") +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+dfhabs$hab
+dffilt$hab
+unique(dffilt$hab)
+unique(dfhabs$hab)
+dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))
+dfhabs
+dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')
+dfhabs %>% group_by(cat2) %>% summarize(n())
+Q
+undebug(hab_curve_plot)
+dev.new(width = 12, height = 5)#
+hab_curve_plot(savname)
+#' Curves with CIs for signficant habitats#
+#'#
+#' @author Christopher J. Brown#
+#' @rdname hab_curve_plot#
+#' @export#
+hab_curve_plot <- function(savnam){#
+	data(lv_input)#
+	data(bentbl)#
+	load(savnam)#
+#
+	#Covariates#
+	x <- lv_input$mindist#
+	flowind <- lv_input$flow#
+	n <- nrow(lv_input$y)#
+	nhabs <- ncol(lv_input$y)#
+	habnams <- dimnames(lv_input$y)[[2]]#
+#
+	colnams <- dimnames(mcout3[[1]])[[2]]#
+#
+	ialpha <- stringr::str_detect(colnams, 'alpha')#
+	ibeta <- stringr::str_detect(colnams, 'beta')#
+	iint <- stringr::str_detect(colnams, 'int')#
+	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
+	igamf <- stringr::str_detect(colnams, 'gammaf')#
+	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
+#
+	num_levels <- sum(ialpha)/nhabs#
+#
+	mcmat <- as.matrix(mcout3[[1]])#
+#
+	params <- list(alpha = mcmat[,ialpha],#
+	beta = mcmat[,ibeta],#
+	int = mcmat[,iint],#
+	gamma = mcmat[,igam],#
+	gammaf = mcmat[,igamf],#
+	nu = mcmat[,inu])#
+#
+	nsamp <- nrow(mcmat)#
+#
+	nx <- 20#
+	xvals <- seq(min(x), max(x), length.out = nx)#
+	predflow <- rep(0, nx)#
+#
+	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
+		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
+		purrr::transpose()#
+	#so this creates a list structured in order of - predval - sample - habitat.#
+#
+	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
+		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
+		data.frame()#
+		proppred <- df2/rowSums(df2)#
+		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
+		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
+		df3#
+	}#
+	smc <- summary(mcout3)#
+	betaquant <- smc$quantiles[ibeta,]#
+#
+	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
+	sighab <- habnams[issig]#
+	betainc <- betaquant[issig,3]#
+	datord <- data.frame(hab = habnams[issig], beta = betainc)#
+#
+	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
+#
+	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
+	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
+	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
+	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
+	dplyr::left_join(datord)#
+#
+	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
+	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
+	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
+	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
+	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
+	#Convert distances back to km#
+	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
+	# for (i in 1:length(sighab)){#
+		# df <- filter(dffilt, hab == sighab[i])#
+		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
+		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
+#
+		# }#
+#
+	dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))#
+	dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')#
+#
+}
+dev.new(width = 12, height = 5)#
+hab_curve_plot(savname)
+dev.new(width = 13, height = 5)#
+hab_curve_plot(savname)
+#' Curves with CIs for signficant habitats#
+#'#
+#' @author Christopher J. Brown#
+#' @rdname hab_curve_plot#
+#' @export#
+hab_curve_plot <- function(savnam){#
+	data(lv_input)#
+	data(bentbl)#
+	load(savnam)#
+#
+	#Covariates#
+	x <- lv_input$mindist#
+	flowind <- lv_input$flow#
+	n <- nrow(lv_input$y)#
+	nhabs <- ncol(lv_input$y)#
+	habnams <- dimnames(lv_input$y)[[2]]#
+#
+	colnams <- dimnames(mcout3[[1]])[[2]]#
+#
+	ialpha <- stringr::str_detect(colnams, 'alpha')#
+	ibeta <- stringr::str_detect(colnams, 'beta')#
+	iint <- stringr::str_detect(colnams, 'int')#
+	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
+	igamf <- stringr::str_detect(colnams, 'gammaf')#
+	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
+#
+	num_levels <- sum(ialpha)/nhabs#
+#
+	mcmat <- as.matrix(mcout3[[1]])#
+#
+	params <- list(alpha = mcmat[,ialpha],#
+	beta = mcmat[,ibeta],#
+	int = mcmat[,iint],#
+	gamma = mcmat[,igam],#
+	gammaf = mcmat[,igamf],#
+	nu = mcmat[,inu])#
+#
+	nsamp <- nrow(mcmat)#
+#
+	nx <- 20#
+	xvals <- seq(min(x), max(x), length.out = nx)#
+	predflow <- rep(0, nx)#
+#
+	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
+		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
+		purrr::transpose()#
+	#so this creates a list structured in order of - predval - sample - habitat.#
+#
+	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
+		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
+		data.frame()#
+		proppred <- df2/rowSums(df2)#
+		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
+		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
+		df3#
+	}#
+	smc <- summary(mcout3)#
+	betaquant <- smc$quantiles[ibeta,]#
+#
+	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
+	sighab <- habnams[issig]#
+	betainc <- betaquant[issig,3]#
+	datord <- data.frame(hab = habnams[issig], beta = betainc)#
+#
+	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
+#
+	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
+	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
+	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
+	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
+	dplyr::left_join(datord)#
+#
+	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
+	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
+	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
+	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
+	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
+	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
+	#Convert distances back to km#
+	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
+	# for (i in 1:length(sighab)){#
+		# df <- filter(dffilt, hab == sighab[i])#
+		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
+		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
+#
+		# }#
+#
+	dfhabs <- data.frame(lv_input$y/375) %>%#
+		tidyr::gather(hab, cover) %>%#
+		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))#
+	dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
+#
+	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
+	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
+	geom_line() +#
+	facet_grid( ~ cat2)+#
+	geom_ribbon(aes(ymin = X2.5., ymax = X97.5., linetype = NA), colour = 'grey80', alpha = 0.3) +#
+	theme_classic() +#
+	xlab('Distance to nearest log ponds (km)') +#
+	ylab('Cover (proportion)')#
+#
+}
+dev.new(width = 13, height = 5)#
+hab_curve_plot(savname)

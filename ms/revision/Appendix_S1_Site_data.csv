@@ -1,0 +1,50 @@
+"site","reeftype","Reef.ID","cover","pres.topa","pres.habili","secchi","flow","logged","mindist","coordx","coordy"
+1,"Lagoon exposed fringing - reef flat",1,0.0613333333333333,5,8,12,"Strong","Not logged",3648.305192,436241.287673984,9163860.89820144
+2,"Lagoon exposed fringing - reef flat",2,0.464,1,0,9.5,"Strong","Logged",2663.086579,435632.544142236,9162877.25139489
+3,"Lagoon exposed fringing - reef flat",3,0.645333333333333,6,3,10.2,"Strong","Logged",3186.761902,429647.469734477,9164634.42710541
+4,"Lagoon exposed fringing - reef flat",4,0.128,0,0,4.7,"Mild","Logged",547.2792206,429325.392249484,9161596.97380206
+5,"Lagoon exposed fringing - reef flat",5,0.0133333333333333,0,0,5,"Mild","Logged",404.5584412,439682.133886024,9162095.36823885
+6,"Lagoon exposed fringing - reef flat",6,0.552,3,2,10.8,"Strong","Logged",2946.761902,437608.486563495,9163590.72965074
+7,"Lagoon exposed fringing - reef flat",7,0.130666666666667,0,0,6.1,"Mild","Logged",2338.233765,448857.21912658,9154591.74092905
+8,"Lagoon exposed fringing - reef flat",8,0.008,0,0,7.2,"Mild","Logged",1658.528137,447557.41600184,9157066.72110497
+9,"Lagoon exposed fringing - reef flat",9,0.184,0,0,6,"Mild","Logged",3679.554108,446962.153985791,9152788.74267314
+10,"Lagoon exposed fringing - reef flat",10,0.28,0,0,7,"Mild","Logged",3903.74675,446047.659415398,9151977.35030814
+11,"Lagoon exposed fringing - reef flat",11,0.0453333333333333,0,1,10,"Mild","Logged",1354.264069,438825.093356883,9155991.66138132
+12,"Intra-lagoon patch-reef complex - subtidal reef flat",12,0.16,0,0,9.5,"Mild","Logged",874.2640687,443982.049604328,9154677.99946922
+13,"Lagoon exposed fringing - reef flat",13,0.112,0,0,7.5,"Mild","Logged",499.7056275,454121.647843025,9145456.60956979
+14,"Lagoon exposed fringing - reef flat",14,0.00266666666666667,0,0,4,"Mild","Logged",1173.380951,450005.965562295,9155094.87577888
+15,"Lagoon exposed fringing - reef flat",15,0.072,0,1,8.8,"Mild","Logged",2567.056275,435560.753661755,9158845.20678562
+16,"Lagoon exposed fringing - reef flat",16,0.0293333333333333,0,0,14.5,"Mild","Logged",671.5432893,434767.850084654,9156277.03096399
+17,"Intra-lagoon patch-reef complex - subtidal reef flat",17,0.213333333333333,0,0,6.4,"Mild","Logged",3601.614716,443074.164048807,9152044.62241741
+18,"Lagoon exposed fringing - reef flat",18,0.0293333333333333,1,0,6.2,"Mild","Logged",2738.893937,444209.728315415,9158041.31901812
+19,"Lagoon exposed fringing - reef flat",19,0.096,0,0,10,"Mild","Logged",6445.950212,446904.531906647,9149101.70875298
+20,"Lagoon exposed fringing - reef flat",20,0.0213333333333333,0,0,10.3,"Mild","Logged",1446.396103,450993.234592275,9149652.26697071
+21,"Lagoon exposed fringing - reef flat",21,0.269333333333333,0,0,8,"Mild","Logged",589.7056275,454932.061177582,9143259.60025787
+22,"Lagoon exposed fringing - reef flat",22,0.096,0,0,9.3,"Mild","Logged",3200.071427,453493.322183334,9148569.1661805
+23,"Lagoon exposed fringing - reef flat",23,0.376,7,26,11,"Mild","Not logged",22018.35929,422184.513951921,9174692.4952738
+24,"Lagoon exposed fringing - reef flat",24,0.192,1,3,14,"Mild","Not logged",21834.76406,425421.452391608,9172215.56937876
+25,"Lagoon exposed fringing - reef flat",25,0.168,15,7,8,"Mild","Not logged",21206.89609,428228.83019995,9170498.44591138
+26,"Lagoon exposed fringing - reef flat",26,0.16,0,2,13,"Mild","Not logged",21416.01297,426189.033221311,9173920.41830265
+27,"Lagoon exposed fringing - reef flat",27,0.653333333333333,0,1,13.7,"Mild","Not logged",14724.61254,416912.166532905,9174677.143504
+28,"Lagoon exposed fringing - reef flat",28,0.616,0,0,12,"Mild","Not logged",18431.30301,419131.357731697,9175940.13684153
+29,"Lagoon exposed fringing - reef flat",29,0.368,2,2,8.5,"Mild","Not logged",21261.08007,421485.825292436,9174814.09145203
+30,"Lagoon exposed fringing - reef flat",30,0.0773333333333333,0,0,12.5,"Mild","Not logged",31975.92421,414674.17683546,9182978.44210356
+31,"Lagoon exposed fringing - reef flat",31,0.00266666666666667,0,0,8.9,"Mild","Not logged",29998.05625,417439.223500889,9178173.89092612
+32,"Lagoon exposed fringing - reef flat",32,0.458666666666667,2,6,15.2,"Mild","Not logged",25358.35062,410979.715220369,9180804.92384816
+33,"Lagoon exposed fringing - reef flat",33,0.125333333333333,1,1,9.4,"Mild","Not logged",29437.8333,414008.621038728,9181113.26176398
+34,"Lagoon exposed fringing - reef flat",34,0.28,0,0,12.5,"Mild","Not logged",30918.49348,415304.193381967,9181800.97894688
+35,"Lagoon exposed fringing - reef flat",35,0.424,32,7,10.5,"Mild","Not logged",29213.27486,414401.499467661,9179856.8964272
+36,"Lagoon exposed fringing - reef flat",36,0.442666666666667,17,5,11.3,"Mild","Not logged",28555.4069,413681.122900193,9179701.95484333
+37,"Lagoon exposed fringing - reef flat",37,0.210666666666667,25,13,12,"Mild","Not logged",26844.15798,412169.390417819,9180207.83863027
+38,"Lagoon exposed fringing - reef flat",38,0.394666666666667,8,11,14,"Mild","Not logged",16919.75972,417215.194849216,9176876.66421
+39,"Lagoon exposed fringing - reef flat",39,0.44,5,8,12,"Mild","Not logged",18899.75972,419754.187596246,9176332.54071742
+40,"Lagoon exposed fringing - reef flat",40,0.626666666666667,3,6,8,"Mild","Not logged",23245.49565,424761.641582147,9175051.4357423
+41,"Lagoon exposed fringing - reef flat",41,0.269333333333333,0,2,15,"Mild","Not logged",21411.7489,426473.52518766,9174049.09484078
+42,"Lagoon exposed fringing - reef flat",42,0.096,0,0,6,"Mild","Not logged",13185.50432,433107.21350352,9170954.28761937
+43,"Lagoon exposed fringing - reef flat",43,0.0853333333333333,1,3,6.7,"Mild","Not logged",15624.03246,430914.586980662,9170359.73696086
+44,"Intra-lagoon patch-reef complex - reef flat",44,0.624,2,1,12,"Mild","Not logged",19395.3528,428082.947763302,9172146.62144412
+45,"Lagoon exposed fringing - reef flat",45,0.44,1,7,7,"Mild","Not logged",22214.68396,422628.306524622,9175260.36101248
+46,"Lagoon exposed fringing - reef flat",46,0.274,4,8,12,"Strong","Not logged",7827.564928,434576.641898641,9167057.01987722
+47,"Lagoon exposed fringing - reef flat",47,0.357333333333333,15,6,8.3,"Strong","Not logged",5911.097398,435417.709650039,9165127.86405037
+48,"Lagoon exposed fringing - reef flat",48,0.634666666666667,12,6,10.4,"Strong","Not logged",5306.833329,435885.887354518,9164817.83110604
+49,"Lagoon exposed fringing - reef flat",49,0.616,8,1,12.2,"Strong","Not logged",3925.584412,436481.644607316,9163965.13837168

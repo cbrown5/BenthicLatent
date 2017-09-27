@@ -1,0 +1,58 @@
+model {
+
+	 ## Data Level ##
+	 for(i in 1:n) {
+	 	for (j in 1:p){
+		 	log(eta[i, j]) <- inprod(alpha[j,], nu[i,]) +
+			beta[j] * nuwq[i] +
+			int[j]
+		 	y[i,j] ~ dpois(eta[i, j])
+			}
+		}
+
+		#latent variable
+		 for (i in 1:n){
+		 	for (k in 1:num.lv){
+		 		nu[i, k] ~ dnorm(0.0,1)
+			}
+		}
+
+		#WQ gradient latent variable
+		for (i in 1:n){
+		   numean[i] <- (d[i] * gamma)
+		   nuwq[i] ~ dnorm(numean[i],1)
+		}
+
+		 # WQ gradient latent variable effects
+		 gamma ~ dexp(1) #dnorm(0, 0.01)
+
+	 ## Process Level ##
+	 for(j in 1:p) {
+	 	int[j] ~ dnorm(0,tau) ## Separate species intercepts
+		beta[j] ~ dnorm(0, 0.05)
+	 }
+
+
+	 # Random latent variables
+	 # Constraints to 0 on upper diagonal
+	 for(i in 1:(num.lv-1)) {
+	 	for(j in (i+1):num.lv){
+	  			alpha[i,j] <- 0
+				}}
+
+	# Sign constraints on diagonal elements
+	 for(i in 1:num.lv) {
+	 	alpha[i,i] ~ dunif(0,20)
+	 }
+
+	 # Free lower elements
+	 for(j in 1:num.lv) {
+	 for(i in (j+1):p) {
+	 	alpha[i,j] ~ dnorm(0,0.05)
+	 }}
+
+	 # Random intercept - precision
+	 tau <- pow(sigma, -2)
+	 sigma ~ dunif(0, 20)
+
+}

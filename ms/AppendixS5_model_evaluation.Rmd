@@ -1,0 +1,62 @@
+---
+bibliography: BenthicLatentLib.bib
+output:
+  word_document: 
+    reference_docx: word-styles-reference-consbiol.docx
+  pdf_document: default
+  html_document: default
+---  
+
+# Appendix S5 Model Evaluation   
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+#library(BenthicLatent)
+devtools::load_all('~/Code/BenthicLatent')
+```  
+
+
+```{r, echo = FALSE, fig.width=10, fig.height=6}
+
+num_levels <- 1:4
+nlvruns <- length(num_levels)
+gamma <- matrix(NA, nrow = nlvruns, ncol = 7)
+gammaf <- matrix(NA, nrow = nlvruns, ncol = 7)
+
+for (iruns in 1:nlvruns){
+	ilv <- num_levels[iruns]
+	savname <- paste0('~/Code/BenthicLatent/data-raw/BLM_numlv',ilv,'_v3.RData')
+	load(file = savname)
+
+	gamma[iruns,] <- jagstools::jagsresults(x = mcout3, params = c('gamma'))
+	gammaf[iruns,] <- jagstools::jagsresults(x = mcout3, params = c('gammaf'))
+}
+
+par(mfrow = c(1,2), mar = c(5,3,1,1))
+plot(num_levels, gamma[,5], ylim = c(-1, 1), xlab = "Number of unconstrained LVs", ylab = "Effect size", pch = 16, las = 2, xaxt = "n")
+arrows(num_levels, gamma[,3], num_levels, gamma[,7], len = 0)
+abline(h=0)
+axis(1, at = num_levels)
+text(1.1, 1, "(a)")
+
+plot(num_levels, gammaf[,5], ylim = c(-4, 4), xlab = "Number of unconstrained LVs", ylab = "Effect size", pch = 16, las = 2, xaxt = "n")
+arrows(num_levels, gammaf[,3], num_levels, gammaf[,7], len = 0)
+abline(h=0)
+axis(1, at = num_levels)
+text(1.1, 4, "(b)")
+
+
+```
+
+**Figure S1** Estimates for the effect of distance to log ponds (a) and high flow (b) on the constrained latent variable as a function of the number of unconstrained latent variables included in the model. Points show median estimate and bars show the 95% credibility interval. 
+
+
+**Table S2** Fit of the two latent variable model to each habitat type. r^2^ values are calculated on observed versus expected abundances. Slope values of 1 indicate now bias, <1 under-predictions and >1 over-prediction. 
+
+```{r kable, echo = FALSE, warning = FALSE}
+load('~/Code/BenthicLatent/data-raw/LV mod estimtes of variance and bias.Rdata')
+data(lv_input)
+df2 <- dplyr::inner_join(est_varbias[[2]], lv_input$habnams_full, by = c('habnams' = "CODE"))
+df <- df2[,c(5,4,1,2)]
+df <- dplyr::arrange(df, meanabund)
+knitr::kable(df, digits = 2, col.names = c('Habitat','Mean abundance','r^2^','Slope of expected on observed'))
+```

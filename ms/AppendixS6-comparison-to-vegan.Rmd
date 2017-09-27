@@ -1,0 +1,116 @@
+---
+bibliography: BenthicLatentLib.bib
+output:
+  html_document: default
+  pdf_document: default
+  word_document:
+    reference_docx: word-styles-reference-consbiol.docx
+---  
+
+# Appendix S6 Comparison to existing multivariate analysis methods
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, results ='markup', warnings = FALSE, message = FALSE, comment = '', strip.white = FALSE)
+```  
+
+
+```{r}
+library(purrr)
+library(devtools)
+library(jagstools)
+library(tidyr)
+library(ggplot2)
+library(stringr)
+library(PlotTools)
+library(vegan)
+devtools::load_all('~/Code/BenthicLatent')
+```  
+
+Here we compare the results of our proposed latent variable model with those that would be obtained using some existing methods for analysis of multivariate community data and environmental gradients. We compare existing methods to the fits of the model with one constrained latent variable and two unconstrained latent variables.  
+
+```{r}
+load_all('~/Code/BenthicLatent')
+data(lv_input)
+setwd('/Users/s2973410/Code/BenthicLatent/data-raw')
+num_levels <- 2
+savname <- paste0('BLM_numlv', num_levels,'_v3.RData')
+load(savname)
+smc <- summary(mcout3)
+ibeta <- grep("beta",dimnames(smc[[2]])[[1]])
+inuwq <- grep("nuwq",dimnames(smc[[2]])[[1]])
+spp_loadings <- smc[[2]][ibeta,3]
+site_loadings <- smc[[2]][inuwq,3]
+spplwr <- smc[[2]][ibeta,1]
+sppupr <- smc[[2]][ibeta,5]
+sitelwr <- smc[[2]][inuwq,1]
+siteupr <- smc[[2]][inuwq,5]
+
+y <- lv_input$y
+sqrty <- sqrt(lv_input$y)
+flow <- lv_input$flow
+invlogity <- ((lv_input$y)/375) + 0.01
+invlogity <- log(invlogity/(1-invlogity))
+mindists <- (lv_input$mindists * lv_input$sddist) + lv_input$mndist
+```
+
+## Non-metric Multidimensional scaling 
+
+We conducted ordination on the benthic community data using a non-metric multidimensional scaling (MDS) with two dimensions, transforming the benthic abundance data using a sqrt transform to standardise the mean-variance relationship. We also tried a logit transform of proportional cover of each benthic group, however results were similar, so here we just present analysis of the abundance data.  The MDS was performed using the `vegan` [@Oksanen2017vegan] package in `R`.  We then fit the environmental variables minimum distance to log ponds and flow (mild or strong) to the ordination using the `envfit` function, with 1000 permutations to evaluate the significance of each environmental predictor. 
+
+```{r}  
+mds <- metaMDS(sqrty, distance = "bray", k = 3, autotransform = FALSE)
+ord.fit <- envfit(mds ~ mindists + flow, perm = 1000)
+``` 
+
+The fit of the MDS ordination to the environmental variables showed a significant (p = 0.003) relationship with flow conditions, but not minimum distance to log ponds (p = 0.71). Thus, the MDS was unable to detect the weaker effect of distance to log ponds on the community structure.  
+Results of the ordination from the MDS were comparable to the Bayesian model, even though the MDS is unconstrained, suggesting that a gradient in community structure is strong enough to manifest without an a-priori hypothesis for its cause.  The species ordination for the two MDS axes were similar to loadings of species on the first constrained latent variable (Figure S2), even though the MDS was not constrained by any environmental predictors.  
+
+```{r}
+par(mfrow = c(1,2))
+plot(mds$species[,1], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings", 
+      main = "MDS1", pch = 16, ylim = c(-5, 3))
+arrows(mds$species[,1], spplwr, mds$species[,1], sppupr, length = 0)
+plot(mds$species[,2], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings", 
+     main = "MDS2", pch = 16, ylim = c(-5, 3))
+arrows(mds$species[,2], spplwr, mds$species[,2], sppupr, length = 0)
+text(-2.15, -2.62, "Halimeda algae", pos = 1, cex = 0.8, xpd = NA)
+text(0.68, -2.78, "Halimeda algae", pos = 2, cex = 0.8)
+
+```  
+
+**Figure S2** Comparison of habitat ordination from the MDS with each the loadings of each habitat on the constrained latent variable from the Bayesian model. Note that the sign of each weight/loading is not comparable across the two methods. Points give median value for the Bayesian model and bars give 95% CIs.  
+
+## Constrained correspondence analysis 
+
+Constrained correspondence analysis (CCA) is used to constrained an ordination habitats across sites by environmental gradients. We conducted ordination on the benthic community data using constraints for minimum distance to log ponds and flow conditions. The CCA was computed using the `vegan` [@Oksanen2017vegan] package in `R`.  
+
+```{r}
+ccamod <- cca(y ~ mindists + flow)
+sccamod <- summary(ccamod)
+```
+
+The two constrained axes accounted for 9.8% of the variation in community structure, with the first constrained axis accounting for 83% of that variance. Given the dominance of the first axis, we proceed with the comparison focussing on the first constrained axis. 
+
+The CCA and the Bayesian ordination both identified a gradient of communities from sites close to log ponds that had low flow toward sites far from log ponds that had high flow. However, the signs of their respective ordinations were switched. For the CCA, the scores of the environmental predictors on the first axis were both negative (-0.19 for distance to log ponds and -0.85 for flow conditions), indicating that it represents a gradient of sites that had high flow or were far from log ponds at low negative values toward sites that had low flow or were closer to log ponds at high positive values. The ordination of sites on the first axis of the CCA and the ordination of sites from the constrained latent variable in the Bayesian model were strongly negatively related (Figure S3, r^2^ = 0.88). Higher positive values of the latent variable from the Bayesian model indicated sites that were further from log ponds and had higher flow, so the two ordinations represent the same gradient. 
+
+```{r}
+plot(sccamod$sites[,1], site_loadings, xlab = "CCA site loadings", ylab = "Bayesian site loadings", 
+       pch = 16, ylim = c(-3, 3))
+arrows( sccamod$sites[,1], sitelwr,  sccamod$sites[,1], siteupr, length = 0)
+```
+**Figure S3** Comparison of site ordination from the CCA with the values for sites on the constrained latent variable from the Bayesian model. Note that the sign of each weight/loading is not comparable across the two methods. Points give median value for the Bayesian model and bars give 95% CIs. 
+
+The ordination of species from the CCA and the species loadings from the Bayesian model were also strongly related, indicating that both methods agree on which species were the dominant drivers of the gradient (Figure S4). However, once again the signs were switched and there was a negative relationship between the ordination of species across the environemtnal gradient for the two methods  (r^2^ = 0.51). 
+
+```{r}
+plot(sccamod$species[,1], spp_loadings, xlab = "CCA species loadings", ylab = "Bayesian species loadings", pch = 16, ylim = c(-5, 3))
+arrows( sccamod$species[,1], spplwr,  sccamod$species[,1], sppupr, length = 0)
+text(0.49, -2.78, "Halimeda algae", pos = 2, cex = 0.8)
+text(0.46, -0.04, "Algal assemblage", pos = 2, cex = 0.8, srt = 320)
+
+```
+**Figure S4** Comparison of species ordination from the CCA with the values for species on the constrained latent variable from the Bayesian model. Note that the sign of each weight/loading is not comparable across the two methods. Points give median value for the Bayesian model and bars give 95% CIs. 
+
+
+
+

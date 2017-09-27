@@ -1,0 +1,36 @@
+## Supplement  
+
+### Calculation of the Watanabe-Aikaike Information Criteria  
+The WAIC is defined as in Gelman et al. ...
+
+$$WAIC = -2*(\widehat{lpd} - \widehat{p}_{_{WAIC}})$$  
+Where the estimate of the log pointwise predictive density (lpd) was calculated:  
+
+$$\widehat{lpd} =  \sum_{i=1}^{n} ln(\frac{1}{S} \sum_{s=1}^{S}\prod_{j=1}^{J} p(y_{i,j} | \psi^s)$$  
+Where there are $S$ samples from the posteriors for the parameters, $y_{i,j}$ are the data (counts) and $p(y_{i,j} | \psi^s)$ is the probability density for the count for each species given the parameter estimates for the abundance model taken from posterior draw $s$.   
+
+The penalty parameter was calculated:  
+$$\widehat{p}_{_{WAIC}} =  \sum_{i=1}^{n} var(\sum_{j=1}^{J} ln(p(y_{i,j} | \psi^s)))$$  
+Where $var$ is the function for the sample variance taken over samples for each observation.  
+Following Hui et al. we calculate $p(y_{i,j} | \psi^s)$ conditional on the estimates for the latent variables.  
+
+
+### Fit of models by habitats  
+
+**Table S1** Fit of the six latent variable model to each habitat type. r^2 values are calculated on observed versus expected abundances. SLope values of 1 indicate now bias, <1 under-predictions and >1 over-prediction. 
+
+```{r kable, echo = FALSE}
+load('~/Code/BenthicLatent/data-raw/LV mod estimtes of variance and bias.Rdata')
+#Table of estimate of variance and bias for the 6 LV model.  
+df <- est_varbias[[6]][,c(3,4,1,2)]
+df <- dplyr::arrange(df, meanabund)
+knitr::kable(df, digits = 2, col.names = c('Habitat','Mean abundance','r^2','Slope of expected on observed'))
+```
+
+
+### Model code  
+
+
+
+### Procedure for building latent variable models  
+Start with `boral`
