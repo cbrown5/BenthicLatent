@@ -1,3 +1,189 @@
+which((datmod2$gear == "drum") & yearnorm == min(datmod2$yearnorm))
+which((datmod2$gear == "drum") & datmod2$yearnorm == min(datmod2$yearnorm))
+imin <- which((datmod2$gear == "drum") & datmod2$yearnorm == min(datmod2$yearnorm))#
+    imax <- which((datmod2$gear == "drum") & datmod2$yearnorm == max(datmod2$yearnorm))
+m2$summary.linear.predictor[c(imin[1], imax[1]),4]
+c(-1, 1) * m2$summary.linear.predictor[c(imin[1], imax[1]),4]
+sum(c(-1, 1) * m2$summary.linear.predictor[c(imin[1], imax[1]),4])
+1-exp(sum(c(-1, 1) * m2$summary.linear.predictor[c(imin[1], imax[1]),4]))
+1-exp(sum(c(1, -1) * m2$summary.linear.predictor[c(imin[1], imax[1]),4]))
+1-exp(sum(c(-1, 1) * m2$summary.linear.predictor[c(imin[1], imax[1]),4]))
+1- exp(m2$summary.lincomb.derived)
+imax
+imax <- which((datmod2$gear == "drum") & datmod2$yearnorm == max(datmod2$yearnorm) & (region.num ==1) & (regsite.num ==1))
+imax <- which((datmod2$gear == "drum") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$region.num ==1) & (datmod2$regsite.num ==1))
+imax
+imin <- which((datmod2$gear == "drum") & datmod2$yearnorm == min(datmod2$yearnorm)& (datmod2$region.num ==1) & (datmod2$regsite.num ==1))
+imin
+which((datmod2$gear == "drum") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$region.num ==1) & (datmod2$regsite.num ==1))
+which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$region.num ==1) & (datmod2$regsite.num ==1))
+(datmod2$region.num ==1)
+which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$region.num ==1) & (datmod2$regsite.num ==1))
+which((datmod2$gear == "net") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$regsite.num ==1))
+which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==1))
+which((datmod2$gear == "net") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$regsite.num ==2))
+which((datmod2$gear == "net") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$regsite.num ==3))
+(datmod2$regsite.num
+datmod2$regsite.num
+datmod2$regsite.num ==3
+which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==3))
+which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==4))
+filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm)))
+filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm))) %>%#
+    filter(gear == "drum")
+d3 <- filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm))) %>%#
+    filter(gear == "drum")
+d3
+tail(datmod2)
+tail(datmod2,10)
+nrow(datmo2)
+nrow(datmod2)
+1-exp(sum(c(-1, 1) * m2$summary.linear.predictor[c(5038, 5041),4]))
+1- exp(m2$summary.lincomb.derived)
+form1
+nregions
+nregions <- length(unique(datmod1$region.num))
+nregions
+regnums <- unique(datmod1$region.num)
+regnums
+nsamples
+length(unique(datmod2$yearnorm))
+length(unique(datmod1$yearnorm))
+ynmat
+ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
+        nrow = nregions)
+ynmat
+ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
+        nrow = nregions, byrow = T)
+ynmat
+regnums
+# Analysis of abundance data using Bayesian GAMM#
+#
+# CJ Brown, Jez Roff, 2017-08-18#
+#
+rm(list=ls()) # clear history#
+#
+# Load packages#
+library(INLA)#
+library(dplyr)#
+library(ggplot2)#
+### CB - isn't it the opposite? Smaller values = less wiggles#
+#
+prior_control <- 1 #Larger values = less wiggles (can't make this much smaller than about 0.01)#
+quickplot <- FALSE #make this true to see plots of effort and cpue by species/gear#
+#
+# Current approach: 14 July 2017#
+# - Using rw2 model which is equivalent to a cubic spline#
+# - We run models where the rw2 is fit for each region, or fit globally. Then compare them#
+# using the WAIC and CPO (lower is better)#
+# - See 2c_priortests for a comparison of alternative priors for hammerheads. Doesn't#
+# make much difference (look quite similar and WAICs are very close).#
+# - One issue arises when you predict to all years. If you predict to early years at sites with no data you get very large values, because of extrapolation. This makes all trends look flat. Need to avoid this! Will filter values that are larger than max observed and remove them from plots#
+# - Be careful, code below does this extrapolation.#
+# - Compared net only and net+drum models for hammerheads. Effectively the same, which is good because not much info in drums (catch is low)#
+#
+thiswd <- "~/Dropbox/Data - QSCP R"#
+devtools::load_all(paste0(thiswd,"/rQSCP"))#
+#
+data(databund)#
+#
+years <- seq(min(databund$year), max(databund$year), by = 1)#
+yearsnorm <- (years - min(years))/diff(range(years))#
+databund$yearnorm <- with(databund, (year - min(years))/diff(range(years)))#
+#
+groups <- levels(databund$group)#
+ngrps <- length(groups)#
+#
+# ---------------#
+# Model formulas#
+# ---------------#
+#
+#Year effect varies by region#
+form1 <- abundance ~ 0 +#
+    f(region.num, model = "iid") + # additive region random effect#
+    f(yearnorm, model = "rw2", replicate=region.num, scale.model = TRUE,#
+    hyper = list(theta = list(prior="pc.prec", param=c(prior_control,0.01)))) + #year effect varies by region#
+    f(regsite.num, model = "iid") + #random site effects#
+    gear + offset(Leffort) #gear effect and offset term#
+#
+#Global yr effect#
+form2 <- abundance ~#
+    f(yearnorm, model = "rw2", scale.model = TRUE,#
+    hyper = list(theta = list(prior="pc.prec", param=c(prior_control,0.01)))) + #global year effect#
+    f(region.num, model = "iid") + # additive region random effect#
+    f(regsite.num, model = "iid") + #site random effect#
+    gear + offset(Leffort) #gear effect and offset term#
+#
+# ---------------#
+# Select group#
+# ---------------#
+#igrp = 1
+igrp = 1
+thisgroup <- groups[igrp]#
+    print(thisgroup)#
+    datuse <- filter(databund, group == thisgroup)#
+#
+    ##
+    # Look at CPUE trends#
+    ##
+    if (quickplot == TRUE){#
+        d2 <- filter(datuse, region == "Mackay")#
+        d3 <- group_by(d2, region, year, gear) %>%#
+            summarize(seff = sum(effort), cpue = mean(cpue))#
+        dev.new()#
+        ggplot(d3, aes(x = year, y = cpue)) +#
+        geom_line()+ facet_grid(gear~., scales = "free")#
+        dev.new()#
+        ggplot(d3, aes(x = year, y = seff)) +#
+        geom_line()+ facet_grid(gear~., scales = "free")#
+    }#
+#
+    # --------------------------------------------------------------#
+    # Data prep#
+    # --------------------------------------------------------------#
+    datuse$region.num <- as.numeric(factor(datuse$region))#
+    datuse$regsite <- paste0(datuse$region, datuse$site)#
+    datuse$regsite.num <- as.numeric(factor(datuse$regsite))#
+#
+    #dataframes for matching once fitting is complete#
+    datreg <- datuse %>% select(region, region.num) %>% distinct()#
+    datyrs <- datuse %>% select(year, yearnorm) %>% distinct()#
+#
+    #Prediction data frames#
+    datextra <- datuse %>% select(gear, yearnorm, region.num) %>% distinct() %>%#
+        mutate(abundance = NA, Leffort = 0, regsite.num = NA)#
+    #df for global prediction#
+    datextra2 <- datuse %>% select(gear, yearnorm) %>% distinct() %>%#
+        mutate(region.num = NA, abundance = NA, Leffort = 0, regsite.num = NA)#
+#
+    dattemp <- datuse[,names(datextra)]#
+    datmod1 <- rbind(dattemp, datextra) #for predicting with formula 1#
+    datmod2 <- rbind(dattemp, datextra, datextra2) #for predicting with formula 2#
+#
+    #indices for prediction dfs.#
+    ipred1 <- (nrow(dattemp)+1) : nrow(datmod1)#
+    ipred2 <- (nrow(dattemp) + nrow(datextra) + 1) : nrow(datmod2)#
+#
+    # ---------------#
+    # Linear combinations#
+    # ---------------
+form1
+regnums
+lc1 <- inla.make.lincomb#
+    nregions <- length(unique(datmod1$region.num))#
+    regnums <- unique(datmod1$region.num)#
+    nsamples <- length(unique(datmod2$yearnorm))#
+    ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
+        nrow = nregions, byrow = T)
+regnums
+lc1 <- inla.make.lincombs(#
+            yearnorm = c(-1, rep(NA, nsamples-2), 1),#
+            region.num = regnums#
+        )
+ynmat
+regnums
+AA <- matrix(NA, nregions, nregions)
+diag(AA) <- 1
 lc1 <- inla.make.lincombs(#
             yearnorm = c(-1, rep(NA, nsamples-2), 1),#
             region.num = AA#
@@ -2512,10 +2698,6 @@ install.packages("matrix")
 install.packages("Matrix")
 library(INLA)
 15*((4*4))
-library(rjags
-)
-citation("rjags"0
-citation("rjags")
 # ----------------------------------------------- ##
 # Plot results for best model#
 # ----------------------------------------------- ##
@@ -2543,10 +2725,7 @@ setwd('/Users/s2973410/Code/BenthicLatent/data-raw')#
 #
 num_levels <- 2#
 savname <- paste0('BLM_numlv', num_levels,'_v3.RData')#
-# ---------- ##
-# HABITAT LOADINGS PLOT#
-# ---------- ##
-#
+# ----------
 load(savname)#
 smc <- summary(mcout3)#
 ibeta <- grep("beta",dimnames(smc[[2]])[[1]])#
@@ -2555,489 +2734,5 @@ smc[[2]][ibeta,3]#
 lv_input$habnams#
 dimnames(lv_input$y)[[2]]#
 #
-dev.new(width = 10, height = 5)#
-habitat_loadings_plot(savname, prows = 1, pcols = 3)
-habitat_loadings_plot
-dev.new(width = 10, height = 6)#
-habitat_loadings_plot(savname, prows = 1, pcols = 3)
 dev.new(width = 10, height = 4)#
 habitat_loadings_plot(savname, prows = 1, pcols = 3)
-#' Create flow diagram of model#
-#'#
-#' @author Christopher J. Brown#
-#' @rdname habitat_loadings_plot#
-#' @export#
-habitat_loadings_plot <- function(file, prows=2, pcols=2){#
-data(lv_input)#
-load(file = file)#
-#
-smcmn <- summary(mcout3)#
-#Weights on habitats#
-#
-dimnames(lv_input$y)[[2]]#
-habnams <- dimnames(lv_input$y)[[2]]#
-habnams_full <- lv_input$habnams_full$CATEGORY#
-nhabs <- length(habnams)#
-#
-#Number of LVs#
-colnams <- dimnames(mcout3[[1]])[[2]]#
-ialpha <- stringr::str_detect(colnams, 'alpha')#
-num_levels <- sum(ialpha)/nhabs#
-#
-par(mfrow = c(prows, pcols), mar = c(5,6,2,2))#
-iord <- plot_beta_mnm(smcmn, habnams_full, xlab = "Constrained LV")#
-par(mar = c(5,0.5,2,0.5))#
-purrr::walk(1:num_levels, ~plot_alpha_mnm(smcmn, habnams_full, lv =.x, nlv = num_levels, iord, xlab = paste("LV", .x)))#
-}
-dev.new(width = 10, height = 4)#
-habitat_loadings_plot(savname, prows = 1, pcols = 3)
-debug(hab_curve_plot)
-dev.new(width = 12, height = 5)
-hab_curve_plot(savname)
-n
-data(lv_input)#
-	data(bentbl)#
-	load(savnam)#
-#
-	#Covariates#
-	x <- lv_input$mindist#
-	flowind <- lv_input$flow#
-	n <- nrow(lv_input$y)#
-	nhabs <- ncol(lv_input$y)#
-	habnams <- dimnames(lv_input$y)[[2]]#
-#
-	colnams <- dimnames(mcout3[[1]])[[2]]#
-#
-	ialpha <- stringr::str_detect(colnams, 'alpha')#
-	ibeta <- stringr::str_detect(colnams, 'beta')#
-	iint <- stringr::str_detect(colnams, 'int')#
-	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
-	igamf <- stringr::str_detect(colnams, 'gammaf')#
-	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
-#
-	num_levels <- sum(ialpha)/nhabs#
-#
-	mcmat <- as.matrix(mcout3[[1]])#
-#
-	params <- list(alpha = mcmat[,ialpha],#
-	beta = mcmat[,ibeta],#
-	int = mcmat[,iint],#
-	gamma = mcmat[,igam],#
-	gammaf = mcmat[,igamf],#
-	nu = mcmat[,inu])#
-#
-	nsamp <- nrow(mcmat)#
-#
-	nx <- 20#
-	xvals <- seq(min(x), max(x), length.out = nx)#
-	predflow <- rep(0, nx)#
-#
-	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
-		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
-		purrr::transpose()#
-	#so this creates a list structured in order of - predval - sample - habitat.#
-#
-	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
-		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
-		data.frame()#
-		proppred <- df2/rowSums(df2)#
-		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
-		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
-		df3#
-	}#
-	smc <- summary(mcout3)#
-	betaquant <- smc$quantiles[ibeta,]#
-#
-	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
-	sighab <- habnams[issig]#
-	betainc <- betaquant[issig,3]#
-	datord <- data.frame(hab = habnams[issig], beta = betainc)#
-#
-	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
-#
-	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
-	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
-	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
-	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
-	dplyr::left_join(datord)#
-#
-	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
-	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
-	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
-	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
-	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
-	#Convert distances back to km#
-	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
-	# for (i in 1:length(sighab)){#
-		# df <- filter(dffilt, hab == sighab[i])#
-		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
-		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
-#
-		# }
-dffilt
-head(dffilt)
-lv_input$y
-data.frame(lv_input$y)
-head(dffilt)
-dffilt
-head(dffilt)
-dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover)
-dfhabs
-head(dffilt)
-dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		left_join(select(dffilt, hab, cat2))
-dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		left_join(dplyr::select(dffilt, hab, cat2))
-dfhabs
-head(dfhabs)
-names(lv_input)
-lv_input$mindists
-((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000
-dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000
-ggplot(dfhabs, aes(x = distkm, y = cover)) +#
-	geom_point() +#
-	facet_grid( ~ cat2)+
-ggplot(dfhabs, aes(x = distkm, y = cover)) +#
-	geom_point() +#
-	facet_grid( ~ cat2)
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)') +#
-	geom_point(data = dfhab)
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)') +#
-	geom_point(data = dfhabs)
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)') +#
-	geom_point(data = dfhabs, aes(y = cover))
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover)) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 1) +#
-	geom_line()
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey") +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-dfhabs
-nrow(dfhabs)
-dplyr::select(dffilt, hab, cat2)
-dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		left_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))
-dfhabs
-dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey") +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-dfhabs$hab
-dffilt$hab
-unique(dffilt$hab)
-unique(dfhabs$hab)
-dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))
-dfhabs
-dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')
-dfhabs %>% group_by(cat2) %>% summarize(n())
-Q
-undebug(hab_curve_plot)
-dev.new(width = 12, height = 5)#
-hab_curve_plot(savname)
-#' Curves with CIs for signficant habitats#
-#'#
-#' @author Christopher J. Brown#
-#' @rdname hab_curve_plot#
-#' @export#
-hab_curve_plot <- function(savnam){#
-	data(lv_input)#
-	data(bentbl)#
-	load(savnam)#
-#
-	#Covariates#
-	x <- lv_input$mindist#
-	flowind <- lv_input$flow#
-	n <- nrow(lv_input$y)#
-	nhabs <- ncol(lv_input$y)#
-	habnams <- dimnames(lv_input$y)[[2]]#
-#
-	colnams <- dimnames(mcout3[[1]])[[2]]#
-#
-	ialpha <- stringr::str_detect(colnams, 'alpha')#
-	ibeta <- stringr::str_detect(colnams, 'beta')#
-	iint <- stringr::str_detect(colnams, 'int')#
-	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
-	igamf <- stringr::str_detect(colnams, 'gammaf')#
-	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
-#
-	num_levels <- sum(ialpha)/nhabs#
-#
-	mcmat <- as.matrix(mcout3[[1]])#
-#
-	params <- list(alpha = mcmat[,ialpha],#
-	beta = mcmat[,ibeta],#
-	int = mcmat[,iint],#
-	gamma = mcmat[,igam],#
-	gammaf = mcmat[,igamf],#
-	nu = mcmat[,inu])#
-#
-	nsamp <- nrow(mcmat)#
-#
-	nx <- 20#
-	xvals <- seq(min(x), max(x), length.out = nx)#
-	predflow <- rep(0, nx)#
-#
-	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
-		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
-		purrr::transpose()#
-	#so this creates a list structured in order of - predval - sample - habitat.#
-#
-	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
-		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
-		data.frame()#
-		proppred <- df2/rowSums(df2)#
-		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
-		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
-		df3#
-	}#
-	smc <- summary(mcout3)#
-	betaquant <- smc$quantiles[ibeta,]#
-#
-	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
-	sighab <- habnams[issig]#
-	betainc <- betaquant[issig,3]#
-	datord <- data.frame(hab = habnams[issig], beta = betainc)#
-#
-	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
-#
-	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
-	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
-	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
-	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
-	dplyr::left_join(datord)#
-#
-	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
-	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
-	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
-	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
-	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
-	#Convert distances back to km#
-	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
-	# for (i in 1:length(sighab)){#
-		# df <- filter(dffilt, hab == sighab[i])#
-		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
-		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
-#
-		# }#
-#
-	dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))#
-	dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5.), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')#
-#
-}
-dev.new(width = 12, height = 5)#
-hab_curve_plot(savname)
-dev.new(width = 13, height = 5)#
-hab_curve_plot(savname)
-#' Curves with CIs for signficant habitats#
-#'#
-#' @author Christopher J. Brown#
-#' @rdname hab_curve_plot#
-#' @export#
-hab_curve_plot <- function(savnam){#
-	data(lv_input)#
-	data(bentbl)#
-	load(savnam)#
-#
-	#Covariates#
-	x <- lv_input$mindist#
-	flowind <- lv_input$flow#
-	n <- nrow(lv_input$y)#
-	nhabs <- ncol(lv_input$y)#
-	habnams <- dimnames(lv_input$y)[[2]]#
-#
-	colnams <- dimnames(mcout3[[1]])[[2]]#
-#
-	ialpha <- stringr::str_detect(colnams, 'alpha')#
-	ibeta <- stringr::str_detect(colnams, 'beta')#
-	iint <- stringr::str_detect(colnams, 'int')#
-	igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
-	igamf <- stringr::str_detect(colnams, 'gammaf')#
-	inu <- stringr::str_detect(colnams, '\\bnu\\b')#
-#
-	num_levels <- sum(ialpha)/nhabs#
-#
-	mcmat <- as.matrix(mcout3[[1]])#
-#
-	params <- list(alpha = mcmat[,ialpha],#
-	beta = mcmat[,ibeta],#
-	int = mcmat[,iint],#
-	gamma = mcmat[,igam],#
-	gammaf = mcmat[,igamf],#
-	nu = mcmat[,inu])#
-#
-	nsamp <- nrow(mcmat)#
-#
-	nx <- 20#
-	xvals <- seq(min(x), max(x), length.out = nx)#
-	predflow <- rep(0, nx)#
-#
-	df <- purrr::map(1:nsamp, ~mapabund_hyper(num_levels, nx, nhabs, xvals, predflow, params$alpha[.x,],#
-		params$beta[.x,], params$int[.x,], params$gamma[.x], params$gammaf[.x])) %>%#
-		purrr::transpose()#
-	#so this creates a list structured in order of - predval - sample - habitat.#
-#
-	get_pred_ci <- function(i, df, nsamp, habnams, quants = c(0.025, 0.5, 0.975)){#
-		df2 <- df[[i]] %>% unlist() %>% matrix(nrow = nsamp, byrow = T) %>%#
-		data.frame()#
-		proppred <- df2/rowSums(df2)#
-		df3 <- apply(proppred, 2, quantile, probs = quants) %>%#
-		t() %>% data.frame() %>% cbind(ix = i, hab = habnams)#
-		df3#
-	}#
-	smc <- summary(mcout3)#
-	betaquant <- smc$quantiles[ibeta,]#
-#
-	issig <- purrr::map_lgl(1:nhabs, ~sign(betaquant[.x,1]) == sign(betaquant[.x,5]) )#
-	sighab <- habnams[issig]#
-	betainc <- betaquant[issig,3]#
-	datord <- data.frame(hab = habnams[issig], beta = betainc)#
-#
-	dfci <- purrr::map(1:nx, ~get_pred_ci(.x, df, nsamp, habnams)) %>% dplyr::bind_rows()#
-#
-	dfci$xvals <- xvals[as.numeric(dfci$ix)]#
-	dfci$dist <- (dfci$xvals * sd(lv_input$mindists)) + mean(lv_input$mindists)#
-	dffilt <- dplyr::filter(dfci, hab %in% sighab) %>%#
-	dplyr::left_join(bentbl, by = c('hab' = 'CODE')) %>%#
-	dplyr::left_join(datord)#
-#
-	dffilt$CATEGORY[is.na(dffilt$CATEGORY)] <- dffilt$hab[is.na(dffilt$CATEGORY)]#
-	dffilt$CATEGORY[dffilt$hab == 'branching_dead'] <- 'Dead branching coral'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_rare'] <- 'Rare corals'#
-	dffilt$CATEGORY[dffilt$hab == 'other'] <- 'Other habitats'#
-	dffilt$CATEGORY[dffilt$hab == 'unconsolidated'] <- 'Soft sediment'#
-	dffilt$CATEGORY[dffilt$hab == 'coral_submassive'] <- 'Submassive coral'#
-	dffilt$cat2 <- reorder(dffilt$CATEGORY, dffilt$beta, min)#
-	#Convert distances back to km#
-	dffilt$distkm <- ((dffilt$dist * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	# par(mfrow = c(2,5), mar = c(2,2,2,2), las = 1)#
-	# for (i in 1:length(sighab)){#
-		# df <- filter(dffilt, hab == sighab[i])#
-		# plot(df$dist, df$X50., type = 'l', ylim = c(0, 0.3), xlab = '', ylab = '')#
-		# addpoly(df$dist, y0 = df$X2.5., y = df$X97.5., col = grey(0.8, 0.8))#
-#
-		# }#
-#
-	dfhabs <- data.frame(lv_input$y/375) %>%#
-		tidyr::gather(hab, cover) %>%#
-		right_join(dplyr::distinct(dplyr::select(dffilt, hab, cat2)))#
-	dfhabs$distkm <- ((lv_input$mindists * lv_input$sddist) + lv_input$mndist)/1000#
-#
-	ggplot(dffilt, aes(x = distkm, y = X50.)) +#
-	geom_point(data = dfhabs, aes(y = cover), size = 0.5, color = "grey20", shape = 1) +#
-	geom_line() +#
-	facet_grid( ~ cat2)+#
-	geom_ribbon(aes(ymin = X2.5., ymax = X97.5., linetype = NA), colour = 'grey80', alpha = 0.3) +#
-	theme_classic() +#
-	xlab('Distance to nearest log ponds (km)') +#
-	ylab('Cover (proportion)')#
-#
-}
-dev.new(width = 13, height = 5)#
-hab_curve_plot(savname)

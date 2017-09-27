@@ -4,8 +4,6 @@
 #
 # CJ Brown 2017-09-08
 
-#Should I do RMSE too? Will require much longer runs, as have to save more params
-
 rm(list = ls())
 library(purrr)
 library(devtools)
