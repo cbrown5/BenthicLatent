@@ -29,6 +29,8 @@ iord <- plot_beta_mnm(smcmn, habnams_full, xlab = "Constrained LV")
 par(mar = c(5,0.5,2,0.5))
 purrr::walk(1:num_levels, ~plot_alpha_mnm(smcmn, habnams_full, lv =.x, nlv = num_levels, iord, xlab = paste("LV", .x)))
 
-
+text(-34, 18, "(a)", xpd = NA)
+text(-21.5, 18, "(b)", xpd = NA)
+text(-6.5, 18, "(c)", xpd = NA)
 
 }

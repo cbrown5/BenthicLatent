@@ -23,11 +23,11 @@ plot_alpha_mnm <- function(smc,  habnams, lv=1,nlv, iord, xlim = NULL, xlab = ''
 		}
 
 	plot(vhab[iplot][iord], sppnums, yaxt = 'n', bty = 'n',
-	 xlim = xlim, ylab = ylab, xlab = xlab, pch = 16, col = grey(0.5, 1),
-	 cex =0.7)
+	 xlim = xlim, ylab = ylab, xlab = xlab, pch = 16, col = "black",
+	 cex =0.9)
 	abline(v=0)
 	arrows(x0 = smc$quantiles[ihab[iplot][iord],1], y0=sppnums,
-	 x1 = smc$quantiles[ihab[iplot][iord],5], y1=sppnums, len = 0, col = grey(0.5, 0.5), lwd = 2)
+	 x1 = smc$quantiles[ihab[iplot][iord],5], y1=sppnums, len = 0, col = grey(0, 0.5), lwd = 1.5)
 	#axis(2, at = sppnums, labels =NA, las=1, cex.axis = 0.5)
 	#axis(2, at = sppnums, labels = habnams[iord], las=1, cex.axis = 0.5)
 }

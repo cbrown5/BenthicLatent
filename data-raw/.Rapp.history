@@ -1,2810 +1,1626 @@
-which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==1))
-which((datmod2$gear == "net") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$regsite.num ==2))
-which((datmod2$gear == "net") & datmod2$yearnorm == max(datmod2$yearnorm) & (datmod2$regsite.num ==3))
-(datmod2$regsite.num
-datmod2$regsite.num
-datmod2$regsite.num ==3
-which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==3))
-which((datmod2$gear == "net") & datmod2$yearnorm == min(datmod2$yearnorm) & (datmod2$regsite.num ==4))
-filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm)))
-filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm))) %>%#
-    filter(gear == "drum")
-d3 <- filter(datmod2, yearnorm %in% c(min(yearnorm), max(yearnorm))) %>%#
-    filter(gear == "drum")
-d3
-tail(datmod2)
-tail(datmod2,10)
-nrow(datmo2)
-nrow(datmod2)
-1-exp(sum(c(-1, 1) * m2$summary.linear.predictor[c(5038, 5041),4]))
-1- exp(m2$summary.lincomb.derived)
-form1
-nregions
-nregions <- length(unique(datmod1$region.num))
-nregions
-regnums <- unique(datmod1$region.num)
-regnums
-nsamples
-length(unique(datmod2$yearnorm))
-length(unique(datmod1$yearnorm))
-ynmat
-ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
-        nrow = nregions)
-ynmat
-ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
-        nrow = nregions, byrow = T)
-ynmat
-regnums
-# Analysis of abundance data using Bayesian GAMM#
+class(datpre)
+filter(dat, prefact >1)
+dat$prefact
+install.packages("dplyr")
+library(dplyr)
+dtemp <- dat %>% filter(prefact == inum)
+dtemp
+class(dtemp)
+dtemppre <- dat %>% filter(prefact == inum)
+dtemppost <- dat %>% dplyr::filter(postfact == inum)
+dtemppost
+length(dtemppost)
+dtemppost@data
+nrow(dtemppost)
+inum=2
+dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)
+nrow(dtemppost) == 0
+nrow(dtemppost)
+dtemppost
+dmat <- st_distance(dtemppre, dtemppost)
+dmat
+dim(dmat)
+nrow(dtemppre)
+apply(dmat, 1, min)
+getmindist <- function(inum, dat){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
 #
-# CJ Brown, Jez Roff, 2017-08-18#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- Inf#
+	} else {#
+		dmat <- st_distance(dtemppre, dtemppost)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}
+unq
+xout <- purrr::map(unq, ~getmindist(.x, dat))
+xout
+dvocc <- rbind(xout)
+dvocc
+dvocc <- do.call("rbind", xout)
+dvocc
+plot(dvocc)
+xout
+plot(dvocc["dist"])
+dvocc$dist
+plot(dvocc["dist"])
+dvocc$dist[is.infinite(dvocc$dist)]
+dvocc$dist[is.infinite(dvocc$dist)] <- NA
+plot(dvocc["dist"])
+raster(dvocc)
+yrdiff <- 50
+dvocc$vocc <- (dvocc$dist/1000)/yrdiff
+dvocc$vocc
+spvocc <- as(dvocc, "Spatial")
+rasterize(spvocc, "vocc")
+?rasterize
+rasterize(spvocc, pre, field = "vocc")
+getmindist <- function(inum, dat){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
 #
-rm(list=ls()) # clear history#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- NA#
+	} else {#
+		dmat <- st_distance(dtemppre, dtemppost)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}#
 #
-# Load packages#
-library(INLA)#
+xout <- purrr::map(unq, ~getmindist(.x, dat))#
+#
+dvocc <- do.call("rbind", xout)#
+yrdiff <- 50#
+dvocc$vocc <- (dvocc$dist/1000)/yrdiff#
+spvocc <- as(dvocc, "Spatial")#
+rasterize(spvocc, pre, field = "vocc")
+spvocc
+spvocc$vocc
+pre
+getmindist <- function(inum, dat, infval = -9999){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
+#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- infval#
+	} else {#
+		dmat <- st_distance(dtemppre, dtemppost)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}
+xout <- purrr::map(unq, ~getmindist(.x, dat))#
+#
+dvocc <- do.call("rbind", xout)#
+yrdiff <- 50#
+dvocc$vocc <- (dvocc$dist/1000)/yrdiff#
+spvocc <- as(dvocc, "Spatial")#
+rasterize(spvocc, pre, field = "vocc")
+r <- rasterize(spvocc, pre, field = "vocc")
+plot(r)
+spvocc
+plot(r)#
+plot(spvocc, add = T)
+r
+getmindist <- function(inum, dat, infval = Inf){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
+#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- infval#
+	} else {#
+		dmat <- st_distance(dtemppre, dtemppost)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}#
+#
+xout <- purrr::map(unq, ~getmindist(.x, dat))#
+#
+dvocc <- do.call("rbind", xout)#
+yrdiff <- 50#
+dvocc$vocc <- (dvocc$dist/1000)/yrdiff#
+spvocc <- as(dvocc, "Spatial")
+r <- rasterize(spvocc, pre, field = "vocc")
+plot(r)
+r
+plot(r)
+plot(spvocc, add = T)
+plot(r)
+vignette("vocc")
+plot(r)
+# Run VoCC distance method#
+# CJ Brown 2018-01-12#
+# Based on Hamann et al. 2015 GCB#
+#
+rm(list = ls())#
+library(RColorBrewer)#
+library(raster)#
+library(sf)#
 library(dplyr)#
+#
+devtools::load_all("~/Code/geoengineering/vocc")#
+data(sst)#
+proj4string(sst) <- sp::CRS("+init=epsg:4326")#
+#
+##
+# Distance method functions#
+##
+#
+.getmindist <- function(inum, dat){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
+#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- Inf#
+	} else {#
+		dmat <- st_distance(dtemppre, dtemppost)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}#
+distvocc <- function(pre, post, tdiff, tol, denom = 1){#
+#
+	names(pre) <- "prevar"#
+	names(post) <- "postvar"#
+#
+	datpre <- raster::rasterToPoints(pre, spatial = T) %>%#
+		sf::st_as_sf()#
+	datpost <- raster::rasterToPoints(post, spatial = T) %>%#
+	sf::st_as_sf()#
+#
+	dat <- sf::st_join(datpre, datpost)#
+	ymin <- min(c(datpre$prevar, datpre$postvar))#
+	ymax <- max(c(datpre$prevar, datpre$postvar))#
+	breaks <- seq(ymin-tol, ymax+tol, by = tol)#
+#
+	dat$prefact <- cut(dat$pre, breaks = breaks, labels = FALSE)#
+	dat$postfact <- cut(dat$post, breaks = breaks, labels = FALSE)#
+#
+	unq <- unique(dat$prefact)#
+	xout <- purrr::map(unq, ~.getmindist(.x, dat))#
+#
+	dvocc <- do.call("rbind", xout)#
+	dvocc$vocc <- (dvocc$dist/denom)/tdiff#
+	spvocc <- as(dvocc, "Spatial")#
+	r <- raster::rasterize(spvocc, pre, field = "vocc")#
+	return(r)#
+}#
+#
+##
+# Implement#
+##
+#
+tol <- 0.1#
+#
+pre <- raster(sst,1)#
+post <- raster(sst, 50)#
+tdiff <- 50#
+units <- 1000 #convert to km
+rvocc <- distvocc(pre, post, tdiff, tol, denom = units)
+plot(rvocc)
+rvocc
+# Run VoCC distance method#
+# CJ Brown 2018-01-12#
+# Based on Hamann et al. 2015 GCB#
+#
+rm(list = ls())#
+library(RColorBrewer)#
+library(raster)#
+library(sf)#
+library(dplyr)#
+#
+devtools::load_all("~/Code/geoengineering/vocc")#
+data(sst)#
+proj4string(sst) <- sp::CRS("+init=epsg:4326")#
+#
+##
+# Distance method functions#
+##
+#
+.getmindist <- function(inum, dat, distfun = st_distance, ...){#
+	dtemppre <- dat %>% dplyr::filter(prefact == inum)#
+	dtemppost <- dat %>% dplyr::filter(postfact == inum)#
+#
+	if (nrow(dtemppost) == 0){#
+		dtemppre$dist <- Inf#
+	} else {#
+		dmat <- distfun(dtemppre, dtemppost, ...)#
+		dtemppre$dist <- apply(dmat, 1, min)#
+	}#
+	dtemppre#
+}#
+distvocc <- function(pre, post, tdiff, tol, denom = 1, distfun = st_distance, ...){#
+#
+	names(pre) <- "prevar"#
+	names(post) <- "postvar"#
+#
+	datpre <- raster::rasterToPoints(pre, spatial = T) %>%#
+		sf::st_as_sf()#
+	datpost <- raster::rasterToPoints(post, spatial = T) %>%#
+	sf::st_as_sf()#
+#
+	dat <- sf::st_join(datpre, datpost)#
+	ymin <- min(c(datpre$prevar, datpre$postvar))#
+	ymax <- max(c(datpre$prevar, datpre$postvar))#
+	breaks <- seq(ymin-tol, ymax+tol, by = tol)#
+#
+	dat$prefact <- cut(dat$pre, breaks = breaks, labels = FALSE)#
+	dat$postfact <- cut(dat$post, breaks = breaks, labels = FALSE)#
+#
+	unq <- unique(dat$prefact)#
+	xout <- purrr::map(unq, ~.getmindist(.x, dat, distfun = st_distance, ...))#
+#
+	dvocc <- do.call("rbind", xout)#
+	dvocc$vocc <- (dvocc$dist/denom)/tdiff#
+	spvocc <- as(dvocc, "Spatial")#
+	r <- raster::rasterize(spvocc, pre, field = "vocc")#
+	return(r)#
+}#
+#
+##
+# Implement#
+##
+#
+data(sst)#
+tol <- 0.1
+pre <- raster(sst,1)#
+post <- raster(sst, 50)#
+tdiff <- 50#
+units <- 1000 #convert to km#
+#
+rvocc <- distvocc(pre, post, tdiff, tol, denom = units)
+plot(rvocc)
+tol <- 0.5#
+#
+pre <- raster(sst,1)#
+post <- raster(sst, 50)#
+tdiff <- 50#
+units <- 1000 #convert to km#
+#
+rvocc <- distvocc(pre, post, tdiff, tol, denom = units)#
+plot(rvocc)
+class(st_distance)
+proj4string(pre)
+proj4string(pre) != NA
+!is.na(proj4string(pre))
+?st_distance
+library(vocc)
+?vocc
+?calcvelocityi
+?calcvelocity
+class(datpre)
+citation("boral")
+citation("vocc")
+getwd()
+devtools::build_vignettes("~/Code/geoengineering/vocc")
+devtools::build("~/Code/geoengineering/vocc")
+#' Calculate velocity of climate change using the nearest distance method#
+#'#
+#' @usage distvocc(pre, post, tdiff, tol, denom = 1,#
+#'   distfun = st_distance, ...)#
+#'#
+#' @param pre \code{raster} giving raster of initial climate conditions#
+#' @param post \code{raster} giving raster of future climate conditions#
+#' @param tdiff \code{numeric} giving time difference between pre and post#
+#' @param tol \code{numeric} giving tolerance for classification of#
+#' analogous climate conditions.#
+#' @param denom \code{numeric} giving time giving denominator for#
+#' conversion of distance units (default is metres)#
+#' @param distfun \code{function} that will calculate distances between#
+#' analogous climate conditions.#
+#' @param ... \code{function} other parameters passed to \code{distfun}#
+#'#
+#' @return \code{raster} with the velocity of climate change.#
+#' Default units are metres per unit time (in units of \code{tdiff}).#
+#'#
+#' @details This algorithm is based on the one described in#
+#' Hamann et al. 2015 Velocity of climate change algorithms for#
+#' guiding conservation and management. Global Change Biology 21: 997-1004#
+#' The primary difference is that we use spatial data structures from#
+#' \code{raster} and \code{sf} in the calculations, we use the \code{cut}#
+#' function to identify analogous climate conditions, whereas Hamann et al. used rounding, and we allow flexible specification of the calculation of distances.#
+#' As a consequence you must specify the projection of input raster layers.#
+#' \code{pre} and \code{post} must be matching rasters and#
+#' must contain CRS details (i.e. \code{!is.na(proj4string(pre))}).#
+#'#
+#' The default distance is the euclidean distance or, in the case of unprojected#
+#' coordinates the great circle distance calculated using the#
+#' \code{st_distance()} function.#
+#' User defined distance functions should take \code{sf} points objects for#
+#' the historical and future conditions as the first two arguments#
+#' respectively.#
+#'#
+#' @author Christopher J. Brown#
+#' @examples#
+#' data(sst)#
+#' tol <- 0.1#
+#' pre <- raster(sst,1)#
+#' post <- raster(sst, 50)#
+#' tdiff <- 50#
+#' units <- 1000 #convert to km#
+#' rvocc <- distvocc(pre, post, tdiff, tol, denom = units)#
+#' plot(rvocc)#
+#' @rdname distvocc#
+#' @export#
+#
+distvocc <- function(pre, post, tdiff, tol, denom = 1, distfun = st_distance, ...){#
+#
+	names(pre) <- "prevar"#
+	names(post) <- "postvar"#
+#
+	datpre <- raster::rasterToPoints(pre, spatial = T) %>%#
+		sf::st_as_sf()#
+	datpost <- raster::rasterToPoints(post, spatial = T) %>%#
+	sf::st_as_sf()#
+#
+	dat <- sf::st_join(datpre, datpost)#
+	ymin <- min(c(datpre$prevar, datpre$postvar))#
+	ymax <- max(c(datpre$prevar, datpre$postvar))#
+	breaks <- seq(ymin-tol, ymax+tol, by = tol)#
+#
+	dat$prefact <- cut(dat$pre, breaks = breaks, labels = FALSE)#
+	dat$postfact <- cut(dat$post, breaks = breaks, labels = FALSE)#
+#
+	unq <- unique(dat$prefact)#
+	xout <- purrr::map(unq, ~.getmindist(.x, dat, distfun = st_distance, ...))#
+#
+	dvocc <- do.call("rbind", xout)#
+	dvocc$vocc <- (dvocc$dist/denom)/tdiff#
+	spvocc <- as(dvocc, "Spatial")#
+	r <- raster::rasterize(spvocc, pre, field = "vocc")#
+	return(r)#
+}
+devtools::build("~/Code/geoengineering/vocc")
+devtools::load_all("~/Code/geoengineering/vocc")
+devtools::build("~/Code/geoengineering/vocc")
+devtools::install(build_vignette = FALSE)
+devtools::install("~/Code/geoengineering/vocc", build_vignette = FALSE)
+devtools::build("~/Code/geoengineering/vocc")
+library(vocc)
+?distvocc
+devtools::build("~/Code/geoengineering/vocc")
+?devtools::install
+devtools::install("~/Code/geoengineering/vocc", build_vignette = FALSE)
+library(vocc)
+?distvocc
+#' Calculate velocity of climate change using the nearest distance method#
+#'#
+#' @usage distvocc(pre, post, tdiff, tol, denom = 1,#
+#'   distfun = st_distance, ...)#
+#'#
+#' @param pre \code{raster} giving raster of initial climate conditions#
+#' @param post \code{raster} giving raster of future climate conditions#
+#' @param tdiff \code{numeric} giving time difference between pre and post#
+#' @param tol \code{numeric} giving tolerance for classification of#
+#' analogous climate conditions.#
+#' @param denom \code{numeric} giving time giving denominator for#
+#' conversion of distance units (default is metres)#
+#' @param distfun \code{function} that will calculate distances between#
+#' analogous climate conditions.#
+#' @param ... \code{function} other parameters passed to \code{distfun}#
+#'#
+#' @return \code{raster} with the velocity of climate change.#
+#' Default units are metres per unit time (in units of \code{tdiff}).#
+#'#
+#' @details This algorithm is based on the one described in#
+#' Hamann et al. 2015 Velocity of climate change algorithms for#
+#' guiding conservation and management. Global Change Biology 21: 997-1004#
+#' The primary difference is that we use spatial data structures from#
+#' \code{raster} and \code{sf} in the calculations, we use the \code{cut}#
+#' function to identify analogous climate conditions, whereas Hamann et al. used rounding, and we allow flexible specification of the calculation of distances.#
+#' As a consequence you must specify the projection of input raster layers.#
+#' \code{pre} and \code{post} must be matching rasters and#
+#' must contain CRS details (i.e. \code{!is.na(proj4string(pre))}).#
+#'#
+#' The default distance is the euclidean distance or, in the case of unprojected#
+#' coordinates the great circle distance calculated using the#
+#' \code{st_distance()} function.#
+#' User defined distance functions should take \code{sf} points objects for#
+#' the historical and future conditions as the first two arguments#
+#' respectively.#
+#'#
+#' @author Christopher J. Brown#
+#' @examples#
+#' data(sst)#
+#' tol <- 0.1#
+#' pre <- raster(sst,1)#
+#' post <- raster(sst, 50)#
+#' tdiff <- 50#
+#' units <- 1000 #convert to km#
+#' rvocc <- distvocc(pre, post, tdiff, tol, denom = units)#
+#' plot(rvocc)#
+#' @rdname distvocc#
+#' @export#
+#
+distvocc <- function(pre, post, tdiff, tol, denom = 1, distfun = st_distance, ...){#
+#
+	names(pre) <- "prevar"#
+	names(post) <- "postvar"#
+#
+	datpre <- raster::rasterToPoints(pre, spatial = T) %>%#
+		sf::st_as_sf()#
+	datpost <- raster::rasterToPoints(post, spatial = T) %>%#
+	sf::st_as_sf()#
+#
+	dat <- sf::st_join(datpre, datpost)#
+	ymin <- min(c(datpre$prevar, datpre$postvar))#
+	ymax <- max(c(datpre$prevar, datpre$postvar))#
+	breaks <- seq(ymin-tol, ymax+tol, by = tol)#
+#
+	dat$prefact <- cut(dat$pre, breaks = breaks, labels = FALSE)#
+	dat$postfact <- cut(dat$post, breaks = breaks, labels = FALSE)#
+#
+	unq <- unique(dat$prefact)#
+	xout <- purrr::map(unq, ~.getmindist(.x, dat, distfun = st_distance, ...))#
+#
+	dvocc <- do.call("rbind", xout)#
+	dvocc$vocc <- (dvocc$dist/denom)/tdiff#
+	spvocc <- as(dvocc, "Spatial")#
+	r <- raster::rasterize(spvocc, pre, field = "vocc")#
+	return(r)#
+}
+?distvocc
+??distvocc
+?vocc
+devtools::install("~/Code/geoengineering/vocc", build_vignette = FALSE)
+library(vocc)
+??distvocc
+?distvocc
+?devtools::install
+devtools::load_all("~/Code/geoengineering/vocc")
+?distvocc
+devtools::load_all("~/Code/geoengineering/vocc")
+?distvocc
+?spatialgrad
+distvocc <- function(pre, post, tdiff, tol, denom = 1, distfun = st_distance, ...){#
+#
+	names(pre) <- "prevar"#
+	names(post) <- "postvar"#
+#
+	datpre <- raster::rasterToPoints(pre, spatial = T) %>%#
+		sf::st_as_sf()#
+	datpost <- raster::rasterToPoints(post, spatial = T) %>%#
+	sf::st_as_sf()#
+#
+	dat <- sf::st_join(datpre, datpost)#
+	ymin <- min(c(datpre$prevar, datpre$postvar))#
+	ymax <- max(c(datpre$prevar, datpre$postvar))#
+	breaks <- seq(ymin-tol, ymax+tol, by = tol)#
+#
+	dat$prefact <- cut(dat$pre, breaks = breaks, labels = FALSE)#
+	dat$postfact <- cut(dat$post, breaks = breaks, labels = FALSE)#
+#
+	unq <- unique(dat$prefact)#
+	xout <- purrr::map(unq, ~.getmindist(.x, dat, distfun = st_distance, ...))#
+#
+	dvocc <- do.call("rbind", xout)#
+	dvocc$vocc <- (dvocc$dist/denom)/tdiff#
+	spvocc <- as(dvocc, "Spatial")#
+	r <- raster::rasterize(spvocc, pre, field = "vocc")#
+	return(r)#
+	}
+distvocc
+devtools::install_github("cbrown5/vocc")
+vignette("vocc")
+?distvocc
+.lm
+?.lm
+?lm
+?.lm.fit
+p <- c(0.3, 0.3, 0.4)
+q <- c(0.05, 0.9, 0.05)
+sum(p*log2(p))
+sum(q*log2(q))
+-sum(p*log2(p))
+-sum(q*log2(q))
+sum(p*log2(p/1))
+sum(p*log2(p/q))
+sum(q*log2(q/p))
+350*8
+850*8
+850*7
+31.6*1.2
+library(purrr)
+rm(list = ls())#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
+#
+##
+# Load data#
+##
+#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_infprior.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_infprior.Rdata")#
+#
+load("isotope mixing models/remixsiar/data-raw/sims/gulls_informative_prior.RData")#
+#
+sdat <- read.csv("isotope mixing models/remixsiar/data-raw/gull_sources.csv")
+rout <- map(1:length(gulls_multirun), ~calchell(gulls_multirun[[.x]]))#
+#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin)#
+#
+kout <- map(1:length(gulls_multirun), ~calckl(gulls_multirun[[.x]]))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun), ~calcvarbia(gulls_multirun[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin) %>% left_join(kdf)#
+#
+rdsum <- vbdf %>% group_by(n, sdmult) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))#
+#
+datforplots <- list(basic = rdsum)
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_biased.Rdata")
+getwd()
+setwd("~/Code")
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls.Rdata")
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_biased.Rdata")
+load("isotope mixing models/remixsiar/data-raw/sims/dfin.Rdata")
+sdat <- read.csv("isotope mixing models/remixsiar/data-raw/gull_sources.csv")
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], "boxplot")#
+dev.new(); plot(gulls_multirun_infprior[[which(dfin2$n==40)[1]]][[2]], "boxplot")
+##
+# gulls example plot#
+##
+#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[1]])#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], 'density')
+gpd <- drawpriors(gulls_multirun[[1]]$gulls_in,  default_prior(gulls_multirun[[1]]$gulls_in))#
+xy <- hist(gpd$Krill, breaks = 101, plot = F)#
+ntot <- sum(xy$counts)#
+Hmax <- -sum((xy$counts / ntot) * log2(xy$counts/ntot))#
+#
+# ------------ ##
+# Normal data#
+# ------------ ##
+#
+##
+# Calc inf metrics across simulations#
+##
+#
+rout <- map(1:length(gulls_multirun), ~calchell(gulls_multirun[[.x]]))#
+#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin)
+rm(list = ls())#
 library(ggplot2)#
-### CB - isn't it the opposite? Smaller values = less wiggles#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+library(grid)#
+library(png)#
 #
-prior_control <- 1 #Larger values = less wiggles (can't make this much smaller than about 0.01)#
-quickplot <- FALSE #make this true to see plots of effort and cpue by species/gear#
+library(RColorBrewer)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
 #
-# Current approach: 14 July 2017#
-# - Using rw2 model which is equivalent to a cubic spline#
-# - We run models where the rw2 is fit for each region, or fit globally. Then compare them#
-# using the WAIC and CPO (lower is better)#
-# - See 2c_priortests for a comparison of alternative priors for hammerheads. Doesn't#
-# make much difference (look quite similar and WAICs are very close).#
-# - One issue arises when you predict to all years. If you predict to early years at sites with no data you get very large values, because of extrapolation. This makes all trends look flat. Need to avoid this! Will filter values that are larger than max observed and remove them from plots#
-# - Be careful, code below does this extrapolation.#
-# - Compared net only and net+drum models for hammerheads. Effectively the same, which is good because not much info in drums (catch is low)#
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+load("isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")#
 #
-thiswd <- "~/Dropbox/Data - QSCP R"#
-devtools::load_all(paste0(thiswd,"/rQSCP"))#
+rdsum <- datforplots$basic
+#Plots, eventually turn this into a child#
+#```{r}#
+rm(list = ls())#
+library(ggplot2)#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+library(grid)#
+library(png)#
 #
-data(databund)#
+library(RColorBrewer)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
 #
-years <- seq(min(databund$year), max(databund$year), by = 1)#
-yearsnorm <- (years - min(years))/diff(range(years))#
-databund$yearnorm <- with(databund, (year - min(years))/diff(range(years)))#
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+load("isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")#
 #
-groups <- levels(databund$group)#
-ngrps <- length(groups)#
+rdsum <- datforplots$basic
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")
+# Plots for gulls simulations#
+# CJ Brown 16 Feb 2017#
 #
-# ---------------#
-# Model formulas#
-# ---------------#
+rm(list = ls())#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
 #
-#Year effect varies by region#
-form1 <- abundance ~ 0 +#
-    f(region.num, model = "iid") + # additive region random effect#
-    f(yearnorm, model = "rw2", replicate=region.num, scale.model = TRUE,#
-    hyper = list(theta = list(prior="pc.prec", param=c(prior_control,0.01)))) + #year effect varies by region#
-    f(regsite.num, model = "iid") + #random site effects#
-    gear + offset(Leffort) #gear effect and offset term#
+##
+# Load data#
+##
 #
-#Global yr effect#
-form2 <- abundance ~#
-    f(yearnorm, model = "rw2", scale.model = TRUE,#
-    hyper = list(theta = list(prior="pc.prec", param=c(prior_control,0.01)))) + #global year effect#
-    f(region.num, model = "iid") + # additive region random effect#
-    f(regsite.num, model = "iid") + #site random effect#
-    gear + offset(Leffort) #gear effect and offset term#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_infprior.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_infprior.Rdata")#
 #
-# ---------------#
-# Select group#
-# ---------------#
-#igrp = 1
-igrp = 1
-thisgroup <- groups[igrp]#
-    print(thisgroup)#
-    datuse <- filter(databund, group == thisgroup)#
+load("isotope mixing models/remixsiar/data-raw/sims/gulls_informative_prior.RData")#
 #
-    ##
-    # Look at CPUE trends#
-    ##
-    if (quickplot == TRUE){#
-        d2 <- filter(datuse, region == "Mackay")#
-        d3 <- group_by(d2, region, year, gear) %>%#
-            summarize(seff = sum(effort), cpue = mean(cpue))#
-        dev.new()#
-        ggplot(d3, aes(x = year, y = cpue)) +#
-        geom_line()+ facet_grid(gear~., scales = "free")#
-        dev.new()#
-        ggplot(d3, aes(x = year, y = seff)) +#
-        geom_line()+ facet_grid(gear~., scales = "free")#
-    }#
+sdat <- read.csv("isotope mixing models/remixsiar/data-raw/gull_sources.csv")#
 #
-    # --------------------------------------------------------------#
-    # Data prep#
-    # --------------------------------------------------------------#
-    datuse$region.num <- as.numeric(factor(datuse$region))#
-    datuse$regsite <- paste0(datuse$region, datuse$site)#
-    datuse$regsite.num <- as.numeric(factor(datuse$regsite))#
+##
+# Plot results from equivalent runs#
+##
 #
-    #dataframes for matching once fitting is complete#
-    datreg <- datuse %>% select(region, region.num) %>% distinct()#
-    datyrs <- datuse %>% select(year, yearnorm) %>% distinct()#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], "boxplot")#
+dev.new(); plot(gulls_multirun_infprior[[which(dfin2$n==40)[1]]][[2]], "boxplot")#
+##
+# gulls example plot#
+##
 #
-    #Prediction data frames#
-    datextra <- datuse %>% select(gear, yearnorm, region.num) %>% distinct() %>%#
-        mutate(abundance = NA, Leffort = 0, regsite.num = NA)#
-    #df for global prediction#
-    datextra2 <- datuse %>% select(gear, yearnorm) %>% distinct() %>%#
-        mutate(region.num = NA, abundance = NA, Leffort = 0, regsite.num = NA)#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[1]])#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], 'density')#
+##
+# Max KL#
+##
+gpd <- drawpriors(gulls_multirun[[1]]$gulls_in,  default_prior(gulls_multirun[[1]]$gulls_in))#
+xy <- hist(gpd$Krill, breaks = 101, plot = F)#
+ntot <- sum(xy$counts)#
+Hmax <- -sum((xy$counts / ntot) * log2(xy$counts/ntot))#
 #
-    dattemp <- datuse[,names(datextra)]#
-    datmod1 <- rbind(dattemp, datextra) #for predicting with formula 1#
-    datmod2 <- rbind(dattemp, datextra, datextra2) #for predicting with formula 2#
+# ------------ ##
+# Normal data#
+# ------------ ##
 #
-    #indices for prediction dfs.#
-    ipred1 <- (nrow(dattemp)+1) : nrow(datmod1)#
-    ipred2 <- (nrow(dattemp) + nrow(datextra) + 1) : nrow(datmod2)#
+##
+# Calc inf metrics across simulations#
+##
 #
-    # ---------------#
-    # Linear combinations#
-    # ---------------
-form1
-regnums
-lc1 <- inla.make.lincomb#
-    nregions <- length(unique(datmod1$region.num))#
-    regnums <- unique(datmod1$region.num)#
-    nsamples <- length(unique(datmod2$yearnorm))#
-    ynmat <- matrix(rep(c(-1, rep(NA, nsamples-2), 1), nregions),#
-        nrow = nregions, byrow = T)
-regnums
-lc1 <- inla.make.lincombs(#
-            yearnorm = c(-1, rep(NA, nsamples-2), 1),#
-            region.num = regnums#
-        )
-ynmat
-regnums
-AA <- matrix(NA, nregions, nregions)
-diag(AA) <- 1
-lc1 <- inla.make.lincombs(#
-            yearnorm = c(-1, rep(NA, nsamples-2), 1),#
-            region.num = AA#
-        )
-inla.make.lincombs
-lc1 <- inla.make.lincombs(#
-            yearnorm = c(-1, rep(NA, nsamples-2), 1)#
-        )
-lc1
-ynmat
-lc1 <- inla.make.lincombs(#
-            yearnorm = ynmat#
-        )
-lc1
-form1
-lc1 <- inla.make.lincombs(#
-            yearnorm = ynmat,#
-            region.num = AA#
-        )
-lc1
-system.time(#
-        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
-            lincomb = lc1,#
-        	control.predictor = list(compute = TRUE, link = 1),#
-        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
-    )
-1- exp(m1$summary.lincomb.derived)
-regnums
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(5038, 5041),4]))
-m1$summary.linear.predictor
-datmod1
-1- exp(m1$summary.lincomb.derived)
-datextra
-filter(datextra, region.num ==1)
-filter(datextra, region.num ==1) %>% data.frame()
-datmod1[c(nrow(dattemp)+1, nrow(dattemp)+37),]
-c(nrow(dattemp)+1, nrow(dattemp)+37)
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-1- exp(m1$summary.lincomb.derived)
-m1$summary.lincomb.derived
-lc1 <- inla.make.lincomb(#
-            yearnorm = c(-1, rep(NA, nsamples-2), 1), #
-            region.num = c(1, rep(NA, length = nregions-1))#
-        )
-system.time(#
-        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
-            lincomb = lc1,#
-        	control.predictor = list(compute = TRUE, link = 1),#
-        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
-    )
-349/60
-108/60
-exp(m1$summary.lincomb.derived)
-1- exp(m1$summary.lincomb.derived)
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-lc2
-lc1
-datmod1$region.num
-class(datmod1$region.num)
-1- exp(m1$summary.lincomb.derived)
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-lc1
-c(1, rep(NA, length = nregions-1))
-c(-1, rep(NA, nsamples-2), 1)
-unique(datmod2$yearnorm)
-sort(unique(datmod2$yearnorm))
-filter(datextra, region.num ==1) %>% data.frame()
-years <- sort(unique(datmod1$yearnorm))
-years
-thisreg <- filter(datextra, region.num ==1)
-thisreg
-which(years == min(thisreg$yearnorm))
-thisreg <- filter(datextra, region.num ==1)#
-    ifirst <- which(years == min(thisreg$yearnorm))#
-    lincombyears <- rep(NA, length(years))#
-    lincombyears[ifirst] <- -1#
-    lincombyears[length(years)] <- 1
-lincombyears
-lc1 <- inla.make.lincomb(#
-            yearnorm = lincombyears,#
-            region.num = c(1, rep(NA, length = nregions-1))#
+rout <- map(1:length(gulls_multirun), ~calchell(gulls_multirun[[.x]]))#
+#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin)#
+#
+kout <- map(1:length(gulls_multirun), ~calckl(gulls_multirun[[.x]]))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun), ~calcvarbia(gulls_multirun[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin) %>% left_join(kdf)#
+#
+rdsum <- vbdf %>% group_by(n, sdmult) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))#
+#
+datforplots <- list(basic = rdsum)#
+# ------------ ##
+# Informative prior#
+# ------------ ##
+#
+gpd <- drawpriors(gulls_multirun_infprior[[1]]$dat_in,  ginfprior)#
+#
+Hmax_inf <- rep(NA, 3)#
+for(i in 1:3){#
+    xy <- hist(gpd[,i], breaks = 101, plot = F)#
+    ntot <- sum(xy$counts)#
+    Hmax_inf[i] <- -sum(na.omit((xy$counts / ntot) * log2(xy$counts/ntot)))#
+}#
+#
+rout <- map(1:length(gulls_multirun_infprior), ~calchell(gulls_multirun_infprior[[.x]], dp = ginfprior))#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin2)#
+#
+kout <- map(1:length(gulls_multirun_infprior), ~calckl(gulls_multirun_infprior[[.x]], dp = ginfprior))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin2) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun_infprior), ~calcvarbia(gulls_multirun_infprior[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin2) %>% left_join(kdf)#
+#
+rdsum <- vbdf %>% group_by(n) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))#
+#
+datforplots <- c(datforplots, list(infprior = rdsum))#
+#
+# ------------ ##
+# Biased data#
+# ------------ ##
+#
+rout <- map(1:length(gulls_multirun_biased), ~calchell(gulls_multirun_biased[[.x]]))#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin2)#
+#
+kout <- map(1:length(gulls_multirun_biased), ~calckl(gulls_multirun_biased[[.x]]))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin2) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun_biased), ~calcvarbia(gulls_multirun_biased[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin2) %>% left_join(kdf)#
+#
+rdsum <- vbdf %>% group_by(n) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))#
+#
+datforplots <- c(datforplots, list(biased = rdsum))#
+#
+##
+# Save summary data#
+##
+#
+save(datforplots,#
+    file = "isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+hmax <- list(Hmax = Hmax, Hmax_inf = Hmax_inf)#
+save(hmax,#
+    file = "isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")
+#Plots, eventually turn this into a child#
+#```{r}#
+rm(list = ls())#
+library(ggplot2)#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+library(grid)#
+library(png)#
+#
+library(RColorBrewer)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
+#
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+load("isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")#
+#
+rdsum <- datforplots$basic#
+##
+# ggplot theme#
+##
+#
+theme_plain <- function(base_size = 12){#
+    structure(list(#
+        theme(#
+        panel.grid.major = element_blank(),#
+         panel.grid.minor = element_blank(),#
+        strip.text=element_text(hjust=0.05),#
+        strip.background = element_rect(fill='white', colour = 'white'),#
+        axis.line = element_line(color = "black"),#
+        axis.ticks.length = unit(0.25, "cm"),#
+        plot.background =   element_rect(colour = "white", fill = "white"),#
+        axis.text = element_text(size = base_size * 1.2 ,#
+            lineheight = 1.1, colour = "black", vjust = 1, margin = unit(0.1, "lines")),#
+        panel.background = element_rect(fill = "white", colour = NA)#
         )#
-#
-    lc2 <- inla.make.lincomb(#
-        yearnorm = c(-1, rep(NA, nsamples-2), 1))#
-#
-    # ---------------#
-    # Fit models#
-    # ---------------#
-#
-    #About 2 minutes if we have region and site effects#
-    system.time(#
-        m1 <- inla(form1, data = datmod1, family = "nbinomial",#
-            lincomb = lc1,#
-        	control.predictor = list(compute = TRUE, link = 1),#
-        control.compute =list(waic = TRUE, cpo = TRUE, config = TRUE))#
-    )
-datmod1[c(nrow(dattemp)+1, nrow(dattemp)+37),]#
-    filter(datextra, region.num ==1) %>% data.frame()#
-    1- exp(m1$summary.lincomb.derived)#
-    1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-m1$summary.lincomb.derived
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-thisgroup
-databund
-filter(datuse, region.num ==1)
-1-exp(sum(c(-1, 1) * m1$summary.linear.predictor[c(nrow(dattemp)+1, nrow(dattemp)+37),4]))
-1- exp(m1$summary.lincomb.derived)
-m1$summary.lincomb.derived
-1100+200+100+500+100
-1100+200+100+550+50
-rm(list = ls())#
-library(dplyr)#
-library(corrplot)#
-library(igraph)#
-library(vegan)#
-library(sp)#
-library(rgeos)#
-library(PlotTools)#
-library(RColorBrewer)#
-library(purrr)#
-#
-##
-# Data#
-##
-#
-load('/Users/s2973410/Code/IIT/EC_species.RData')#
-load('/Users/s2973410/Code/IIT/EC_data.RData')#
-load('/Users/s2973410/Code/IIT/ECsites.RData')#
-#
-##
-# PA data for common species #
-##
-pamat <- ecpa#
-spnamscommon <- as.character(ecsp$comnam)#
-nsites <- nrow(pamat)#
-nspp <- ncol(pamat)#
-nstates <- 2^nspp#
-##
-# Models #
-##
-nlats <- 20#
-preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
-#
-pout <- matrix(NA, nrow = nlats, ncol = nspp)#
-pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
-plower <- matrix(NA, nrow = nlats, ncol = nspp)#
-#
-for (ispp in 1:nspp){#
-	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
-	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
-	pout[,ispp] <- pred$fit#
-	pupper[,ispp] <- pred$fit + pred$se.fit#
-	plower[,ispp] <- pred$fit- pred$se.fit#
-}
-#All possible communities#
-commfun <- function(nspp2){#
-	nstates <- 2^nspp2#
-	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
-	commsinv <- 1-comms#
-	return(list(comms = comms, commsinv = commsinv))#
-	}#
-#
-#Probability of each community assuming species are independent#
-pfun <- function(i, xin, nstates, p){#
-	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
-	probs <- abs(xin$commsinv - pmat)#
-	apply(probs, 2, prod) #probability of each community#
+      ), class = "options")#
 }#
 #
-shannon <- function(p){#
-	-sum(p * log2(p))#
-	}#
-kldiv <- <- function(p,q){#
-	-sum(p * log2(p/q))#
-	}#
-#
-helldist <- function(p1, p2){#
-	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
-	}
-# Look at entropy as a measure of beta-diveristy for my east coast example species#
-# CJ Brown 28 Dec 2016  #
-#
-rm(list = ls())#
-library(dplyr)#
-library(corrplot)#
-library(igraph)#
-library(vegan)#
-library(sp)#
-library(rgeos)#
-library(PlotTools)#
-library(RColorBrewer)#
-library(purrr)#
-#
+infotheme <- list(#
+    geom_line(),#
+    theme_plain(),#
+     scale_colour_manual(values = cols,#
+        name = "SD of sources \n (relative)"),#
+    scale_fill_manual(values = cols_alpha),#
+    xlab("Sample size"),#
+    scale_x_continuous(expand = c(0.01,0),#
+    breaks = seq(0, 200, by = 25),#
+    limits = c(0, 200))#
+)#
 ##
-# Data#
+# Base plot#
 ##
-#
-load('/Users/s2973410/Code/IIT/EC_species.RData')#
-load('/Users/s2973410/Code/IIT/EC_data.RData')#
-load('/Users/s2973410/Code/IIT/ECsites.RData')#
-#
-##
-# PA data for common species #
-##
-pamat <- ecpa#
-spnamscommon <- as.character(ecsp$comnam)#
-nsites <- nrow(pamat)#
-nspp <- ncol(pamat)#
-nstates <- 2^nspp#
-##
-# Models #
-##
-nlats <- 20#
-preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
-#
-pout <- matrix(NA, nrow = nlats, ncol = nspp)#
-pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
-plower <- matrix(NA, nrow = nlats, ncol = nspp)#
-#
-for (ispp in 1:nspp){#
-	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
-	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
-	pout[,ispp] <- pred$fit#
-	pupper[,ispp] <- pred$fit + pred$se.fit#
-	plower[,ispp] <- pred$fit- pred$se.fit#
-}#
-#
-##
-# Functions for entropy
-#All possible communities#
-commfun <- function(nspp2){#
-	nstates <- 2^nspp2#
-	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
-	commsinv <- 1-comms#
-	return(list(comms = comms, commsinv = commsinv))#
-	}
-#Probability of each community assuming species are independent#
-pfun <- function(i, xin, nstates, p){#
-	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
-	probs <- abs(xin$commsinv - pmat)#
-	apply(probs, 2, prod) #probability of each community#
-}
-shannon <- function(p){#
-	-sum(p * log2(p))#
-	}#
-kldiv <- <- function(p,q){#
-	-sum(p * log2(p/q))#
-	}
-kldiv <- function(p,q){#
-	-sum(p * log2(p/q))#
-	}
-helldist <- function(p1, p2){#
-	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
-	}
-xout <- commfun(nspp)#
-#
-latdists <- map(1:nlats, ~pfun(.x, xout, nstates, pout))#
-latdists_upp <- map(1: nlats, ~pfun(.x, xout, nstates, pupper))#
-latdists_low <- map(1: nlats, ~pfun(.x, xout, nstates, plower))#
-#
-# Shannon entropy of states #
-en_lats <- map(latdists, shannon) %>% unlist()#
-en_lats_up <- map(latdists_upp, shannon) %>% unlist()#
-en_lats_low <- map(latdists_low, shannon) %>% unlist()
-#This plot suggests I can calculate entropy directly from sp probs. #
-par(mfrow =c (1,2))#
-plot(apply(pout, 1, shannon), en_lats, type = 'l')
-en_lats
-# psout <-pmax(pout, 1-pout)*pmin(pout, 1-pout) #should be able to be simplifed something like thi? #
-psout <- ((1-pout) * pout)*(1/8)#
-cor(en_lats, apply(psout, 1, shannon))
-par(mfrow =c (1,2))#
-plot(apply(pout, 1, shannon), en_lats, type = 'l')
-en_lats
-apply(psout, 1, shannon)
-plot(apply(pout, 1, shannon), apply(psout, 1, shannon), type = 'l')
-#equation not quite right, see notebook. #
-enshort <- function(p){#
-	n <- length(p)#
-	x <- rep(NA, n)#
-	for (i in 1:n){#
-		x[i] <- p[i]*log2((p[i] * prod(1-p[-i])) / (prod(1-p)))		#
-		}#
-	log2(prod(1-p)) + sum(x)#
-	# sum(log2(1-p)) + #
-	# sum((p * (log2(p) + sum(log2(1-p) - log2(1-p)))) - #
-	# sum(log2(1-p)))#
-	}
-p2 <- pout[,1:2]#
-#
-xout2 <- commfun(2)#
-latdists2 <- map(1:nlats, ~pfun(.x, xout2, 4, p2))#
-# Shannon entropy of states #
-en_lats2 <- map(latdists2, shannon) %>% unlist()
-par(mfrow =c (1,2))#
-plot(apply(p2, 1, shannon), en_lats2, type = 'l')#
-plot(apply(p2, 1, enshort), en_lats2, type = 'l')
-# Try simplify this:  #
-# pq * log2(pq) + (1-p)q*log2((1-p)q) + (1-q)p*log2((1-q)p) (1-q)(1-p)*log2((1-p)(1-q))#
-p*q * log(p*q) + (1-p)*q*log((1-p)*q) + (1-q)*p*log((1-q)*p) + (1-q)*(1-p)*log((1-p)*(1-q))
-beta <- matrix(NA, nrow = nlats, ncol = 2)#
-beta_up <- matrix(NA, nrow = nlats, ncol = 2)#
-beta_low <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-bin <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-for (i in 2:(nlats-1)){#
-	# State-entropy#
-	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
-	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
-	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
-	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
-#
-	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
-	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
-#
-	#Pairwise Bray-Curtis #
-	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
-	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
-	}
-beta_av <- apply(beta, 1, mean)#
-beta_av_up <- apply(beta_up, 1, mean)#
-beta_av_low <- apply(beta_low, 1, mean)#
-binav <- apply(bin, 1, mean)
-par(mfrow = c(2,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)
-plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-lines(preddat$SiteLat, beta_av_up, lty = 2)#
-lines(preddat$SiteLat, beta_av_low, lty = 2)
-# Slope of the binomial is similar to my entropy measure, why is this?  #
-# plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
-par(mfrow = c(2,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
-helldist
-?vetdist
-?vegdist
-beta_low
-helldist
-bin <- matrix(NA, nrow = nlats, ncol = 2)#
-jac <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-for (i in 2:(nlats-1)){#
-#
-	# State-entropy#
-	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
-	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
-#
-	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
-	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
-#
-	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
-	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
-#
-	#Pairwise Bray-Curtis#
-	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
-	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
-#
-	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
-	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
-	}
-beta_av <- apply(beta, 1, mean)#
-beta_av_up <- apply(beta_up, 1, mean)#
-beta_av_low <- apply(beta_low, 1, mean)#
-binav <- apply(bin, 1, mean)#
-jacav <- apply(jac, 1, mean)#
-##
-# Plots#
-##
-#
-par(mfrow = c(2,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-lines(preddat$SiteLat, beta_av_up, lty = 2)#
-lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-# plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
-par(mfrow = c(2,3))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-lines(preddat$SiteLat, beta_av_up, lty = 2)#
-lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
- plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")
-par(mfrow = c(2,3))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-lines(preddat$SiteLat, beta_av_up, lty = 2)#
-lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
-par(mfrow = c(2,3))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(jacav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
-par(mfrow = c(3,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(jacav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")
-par(mfrow = c(3,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
-?vegdist
-# Look at entropy as a measure of beta-diveristy for my east coast example species#
-# CJ Brown 28 Dec 2016#
-#
-rm(list = ls())#
-library(dplyr)#
-library(corrplot)#
-library(igraph)#
-library(vegan)#
-library(sp)#
-library(rgeos)#
-library(PlotTools)#
-library(RColorBrewer)#
-library(purrr)#
-#
-##
-# Data#
-##
-#
-load('/Users/s2973410/Code/IIT/EC_species.RData')#
-load('/Users/s2973410/Code/IIT/EC_data.RData')#
-load('/Users/s2973410/Code/IIT/ECsites.RData')#
-#
-##
-# PA data for common species#
-##
-pamat <- ecpa#
-spnamscommon <- as.character(ecsp$comnam)#
-nsites <- nrow(pamat)#
-nspp <- ncol(pamat)#
-nstates <- 2^nspp#
-##
-# Models#
-##
-nlats <- 20#
-preddat <- data.frame(SiteLat = seq(min(ecsites$SiteLat), max(ecsites$SiteLat), length.out = nlats))#
-#
-pout <- matrix(NA, nrow = nlats, ncol = nspp)#
-pupper <- matrix(NA, nrow = nlats, ncol = nspp)#
-plower <- matrix(NA, nrow = nlats, ncol = nspp)#
-#
-for (ispp in 1:nspp){#
-	mod1 <- glm(pamat[,ispp] ~ SiteLat, family = 'binomial', data = ecsites)#
-	pred <- predict(mod1, newdata =preddat, type = 'response', se =T)#
-	pout[,ispp] <- pred$fit#
-	pupper[,ispp] <- pred$fit + pred$se.fit#
-	plower[,ispp] <- pred$fit- pred$se.fit#
-}#
-#
-##
-# Functions for entropy#
-##
-#
-#All possible communities#
-commfun <- function(nspp2){#
-	nstates <- 2^nspp2#
-	comms <- matrix(as.numeric(intToBits(1: nstates)),ncol= nstates)[1:nspp2,]#
-	commsinv <- 1-comms#
-	return(list(comms = comms, commsinv = commsinv))#
-	}#
-#
-#Probability of each community assuming species are independent#
-pfun <- function(i, xin, nstates, p){#
-	pmat <- matrix(rep(p[i,], nstates), ncol = nstates)#
-	probs <- abs(xin$commsinv - pmat)#
-	apply(probs, 2, prod) #probability of each community#
-}#
-#
-shannon <- function(p){#
-	-sum(p * log2(p))#
-	}#
-#
-kldiv <- function(p,q){#
-	-sum(p * log2(p/q))#
-	}#
-#
-helldist <- function(p1, p2){#
-	(1/sqrt(2)) * sqrt(sum((sqrt(p1) - sqrt(p2))^2))#
-	}#
-#
-##
-# State-distributions for each latitude#
-##
-#
-xout <- commfun(nspp)#
-#
-latdists <- map(1:nlats, ~pfun(.x, xout, nstates, pout))#
-latdists_upp <- map(1: nlats, ~pfun(.x, xout, nstates, pupper))#
-latdists_low <- map(1: nlats, ~pfun(.x, xout, nstates, plower))#
-#
-# Shannon entropy of states#
-en_lats <- map(latdists, shannon) %>% unlist()#
-en_lats_up <- map(latdists_upp, shannon) %>% unlist()#
-en_lats_low <- map(latdists_low, shannon) %>% unlist()#
-#This plot suggests I can calculate entropy directly from sp probs.#
-par(mfrow =c (1,2))#
-plot(apply(pout, 1, shannon), en_lats, type = 'l')#
-#
-# psout <-pmax(pout, 1-pout)*pmin(pout, 1-pout) #should be able to be simplifed something like thi?#
-psout <- ((1-pout) * pout)*(1/8)#
-cor(en_lats, apply(psout, 1, shannon))#
-#
-plot(apply(pout, 1, shannon), apply(psout, 1, shannon), type = 'l')#
-#
-#equation not quite right, see notebook.#
-enshort <- function(p){#
-	n <- length(p)#
-	x <- rep(NA, n)#
-	for (i in 1:n){#
-		x[i] <- p[i]*log2((p[i] * prod(1-p[-i])) / (prod(1-p)))#
-		}#
-	log2(prod(1-p)) + sum(x)#
-	# sum(log2(1-p)) +#
-	# sum((p * (log2(p) + sum(log2(1-p) - log2(1-p)))) -#
-	# sum(log2(1-p)))#
-	}#
-p2 <- pout[,1:2]#
-#
-xout2 <- commfun(2)#
-latdists2 <- map(1:nlats, ~pfun(.x, xout2, 4, p2))#
-# Shannon entropy of states#
-en_lats2 <- map(latdists2, shannon) %>% unlist()#
-par(mfrow =c (1,2))#
-plot(apply(p2, 1, shannon), en_lats2, type = 'l')#
-plot(apply(p2, 1, enshort), en_lats2, type = 'l')#
-#
-# plot(en_lats, apply(psout, 1, shannon))#
-# Try simplify this:#
-# pq * log2(pq) + (1-p)q*log2((1-p)q) + (1-q)p*log2((1-q)p) (1-q)(1-p)*log2((1-p)(1-q))#
-p*q * log(p*q) + (1-p)*q*log((1-p)*q) + (1-q)*p*log((1-q)*p) + (1-q)*(1-p)*log((1-p)*(1-q))#
-##
-# Beta-diversity#
-##
-#
-beta <- matrix(NA, nrow = nlats, ncol = 2)#
-beta_up <- matrix(NA, nrow = nlats, ncol = 2)#
-beta_low <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-bin <- matrix(NA, nrow = nlats, ncol = 2)#
-jac <- matrix(NA, nrow = nlats, ncol = 2)#
-chao <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-for (i in 2:(nlats-1)){#
-#
-	# State-entropy#
-	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
-	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
-#
-	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
-	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
-#
-	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
-	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
-#
-	#Pairwise Bray-Curtis#
-	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
-	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
-#
-	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
-	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
-#
-	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'chao')#
-	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'chao')#
-	}#
-#
-beta_av <- apply(beta, 1, mean)#
-beta_av_up <- apply(beta_up, 1, mean)#
-beta_av_low <- apply(beta_low, 1, mean)#
-binav <- apply(bin, 1, mean)#
-jacav <- apply(jac, 1, mean)#
-chaoav <- apply(chao, 1, mean)#
-#
-##
-# Plots#
-##
-#
-par(mfrow = c(3,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
-plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
-chaoav
-chao
-bin <- matrix(NA, nrow = nlats, ncol = 2)#
-jac <- matrix(NA, nrow = nlats, ncol = 2)#
-chao <- matrix(NA, nrow = nlats, ncol = 2)#
-#
-for (i in 2:(nlats-1)){#
-#
-	# State-entropy#
-	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
-	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
-#
-	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
-	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
-#
-	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
-	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
-#
-	#Pairwise Bray-Curtis#
-	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
-	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
-#
-	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
-	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
-#
-	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'raup')#
-	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'raup')#
-	}#
-#
-beta_av <- apply(beta, 1, mean)#
-beta_av_up <- apply(beta_up, 1, mean)#
-beta_av_low <- apply(beta_low, 1, mean)#
-binav <- apply(bin, 1, mean)#
-jacav <- apply(jac, 1, mean)#
-chaoav <- apply(chao, 1, mean)#
-#
-##
-# Plots#
-##
-#
-par(mfrow = c(3,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
-plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
-betadiver(pout[c(i, i+1),], method = 1)
-pout[c(i, i+1),]
-commdat[commdat>0.5] <- 1
-commdat <- pout[c(i, i+1),]
-commdat[commdat>0.5] <- 1
-commdat[commdat <= 0.5] <- 0
-commdat
-betadiver(pout[c(i, i+1),], method = 1)
-betadiver(commdat, method = 1)
-betadiver(t(commdat), method = 1)
-betadiver(commdat, method = 1)
-betadiver(commdat, method = 2)
-betadiver(commdat, method = 3)
-betadiver(commdat, method = 4)
-commdat
-commdat[1,1]<-0
-betadiver(commdat, method = 4)
-betadiver(commdat, method = 1)
-}2
-betadiver(commdat, method = 2)
-betadiver(commdat, method = 11)
-bin <- matrix(NA, nrow = nlats, ncol = 2)#
-jac <- matrix(NA, nrow = nlats, ncol = 2)#
-chao <- matrix(NA, nrow = nlats, ncol = 2)#
-soren <- rep(NA, nlats)#
-for (i in 2:(nlats-1)){#
-#
-	# State-entropy#
-	beta[i, 1] <- helldist(latdists[[i]], latdists[[i+1]])#
-	beta[i,2] <- helldist(latdists[[i]], latdists[[i-1]])#
-#
-	beta_up[i, 1] <- helldist(latdists_upp[[i]], latdists_upp[[i+1]])#
-	beta_up[i,2] <- helldist(latdists_upp[[i]], latdists_upp[[i-1]])#
-#
-	beta_low[i, 1] <- helldist(latdists_low[[i]], latdists_low[[i+1]])#
-	beta_low[i,2] <- helldist(latdists_low[[i]], latdists_low[[i-1]])#
-#
-	#Pairwise Bray-Curtis#
-	bin[i,1] <- vegdist(pout[c(i, i+1),], method = 'binomial')#
-	bin[i,2] <- vegdist(pout[c(i, i-1),], method = 'binomial')#
-#
-	jac[i,1] <- vegdist(pout[c(i, i+1),], method = 'jaccard')#
-	jac[i,2] <- vegdist(pout[c(i, i-1),], method = 'jaccard')#
-#
-	chao[i,1] <- vegdist(pout[c(i, i+1),], method = 'raup')#
-	chao[i,2] <- vegdist(pout[c(i, i-1),], method = 'raup')#
-	commdat <- pout[c(i, i+1),]#
-	commdat[commdat>0.5] <- 1#
-	commdat[commdat <= 0.5] <- 0#
-	soren[i] <- betadiver(commdat, method = 11)#
-	}
-soren
-beta_av <- apply(beta, 1, mean)#
-beta_av_up <- apply(beta_up, 1, mean)#
-beta_av_low <- apply(beta_low, 1, mean)#
-binav <- apply(bin, 1, mean)#
-jacav <- apply(jac, 1, mean)#
-chaoav <- apply(chao, 1, mean)#
-#
-##
-# Plots#
-##
-#
-par(mfrow = c(3,2))#
-plot(preddat$SiteLat, en_lats/nspp, type = 'l', xlab = "Lat", ylab = "Normalized entropy", ylim = c(0,1))#
-lines(preddat$SiteLat, en_lats_up/nspp, lty = 2)#
-lines(preddat$SiteLat, en_lats_low/nspp, lty = 2)#
-abline(v = -30)#
-#Communities more random at mid-latitudes#
-#
-plot(preddat$SiteLat, beta[,1], type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 2)#
-lines(preddat$SiteLat, beta[,2], lty = 3)#
-lines(preddat$SiteLat, beta_av)#
-abline(v = -30)#
-#Rate of community change is greatest at mid-latitudes, slightly north of Solitary (around Fraser)#
-#
-#average with std errors#
-#plot(preddat$SiteLat, beta_av, type = 'l', xlab = "Lat", ylab = "Hellinger Distance", lty = 1)#
-#lines(preddat$SiteLat, beta_av_up, lty = 2)#
-#lines(preddat$SiteLat, beta_av_low, lty = 2)#
-#
-# Slope of the binomial is similar to my entropy measure, why is this?#
-plot(preddat$SiteLat, binav, col = 'red', type = 'l', xlab = "Lat", ylab = "Binomial distance")#
-plot(preddat$SiteLat, c(-diff(binav),NA), col = 'red', type = 'l', xlab = "Lat", ylab = "Differenced binomial distance")#
-#
-plot(preddat$SiteLat, jacav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")#
-plot(preddat$SiteLat, chaoav, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
-plot(preddat$SiteLat, soren, col = 'red', type = 'l', xlab = "Lat", ylab = "Jaccard distance")
-ls()
-620*4
-1020223/7
-69/7.25
-2*3*438.9
-10/15
-11/15
-20/25
-# Fish habitat Kobe plot#
-# CJ Brown 2017-08-15#
-# v2 has change in q#
-#
-rm(list = ls())#
-#
-library(ggplot2)#
-library(dplyr)#
-#
-schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
-    y <- numeric(t)#
-	y[1] <- yinit#
-	Catch <- rep(NA, t)#
-	Fmort <- numeric(t)#
-	Fmort[1] <- Finit#
-#
-	for(i in 1:(t-1)){#
-        if (which.mgmt == "bmsy"){#
-        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
-            } else {#
-        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
-        }#
-        Catch[i] <- Fmort[i] * q[i] * y[i]#
-        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
-		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
-	}#
-    return(list(y = y, Fmort = Fmort, Catch = Catch))#
-}#
-#
-#Function to specify exponential decline in a parameter to a limit#
-explimfun <- function(t, arate, mindec){#
-    initf <- exp(arate * t)#
-    (initf + mindec) - (initf*mindec)#
-}#
-#
-##
-# Simulations#
-##
-K <- 3#
-rbase <- 0.2#
-qbase <- 1#
-Emax <- 0.4#
-Fmsy <- rbase/(qbase*2)#
-Bmsy <- K/2#
-MSY <- rbase*K/4#
-tmax <- 200#
-a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
-x <- 0.2#
-Finit <- 0.2#
-Yinit <- Bmsy/2#
-#
-rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
-rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
-Fmsyr <- rdecline[tmax]/(qbase*2)#
-Knochange <- rep(K, tmax)#
-Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
-BmsyK <- Kdecline[tmax]/2#
-qnochange <- rep(qbase, tmax)#
-qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
-#plot(qincrease)#
-Fmsyq <- rbase/(qincrease[tmax]*2)#
-#
-nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
-nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
-nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
-nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-#
-nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
-nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
-##
-# Plot Kobe plot#
-##
-mycols <- colorRampPalette(c("grey90", "grey10"))#
-#
-dev.new(width = 6, height = 6)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
-abline(h = 1)#
-abline(v = 1)#
-text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
-text(0.5, 2.21, "Overfished and declining")#
-text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
-text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
-#
-dev.new(width = 8, height = 12)#
-par(mfrow = c(3,2))#
-plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
-#
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#dev.new(width = 8, height = 12)#
-ppi <- 300#
-png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
-    width = 6*ppi, height = 10*ppi)#
-#
-par(mfrow = c(3,2))#
-#
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
-plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
-dev.off()#
-######################
-#
-dev.new(width = 8, height = 4)#
-par(mfrow = c(1,3))#
-plot(nbase$Fmort, nbase$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-plot(nrdecline$Fmort, nrdecline$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-plot(nkdecline$Fmort, nkdecline$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-#
-dev.new(width = 8, height = 6)#
-par(mfrow = c(3,2))#
-plot(1:tmax, nbase$y, type = 'l')#
-plot(1:tmax, nbase$Fmort, type = 'l')#
-plot(1:tmax, nrdecline$y, type = 'l')#
-plot(1:tmax, nrdecline$Fmort, type = 'l')#
-plot(1:tmax, nkdecline$y, type = 'l')#
-plot(1:tmax, nkdecline$Fmort, type = 'l')
-# Fish habitat Kobe plot#
-# CJ Brown 2017-08-15#
-# v2 has change in q#
-#
-rm(list = ls())#
-#
-library(ggplot2)#
-library(dplyr)#
-#
-schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
-    y <- numeric(t)#
-	y[1] <- yinit#
-	Catch <- rep(NA, t)#
-	Fmort <- numeric(t)#
-	Fmort[1] <- Finit#
-#
-	for(i in 1:(t-1)){#
-        if (which.mgmt == "bmsy"){#
-        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
-            } else {#
-        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
-        }#
-        Catch[i] <- Fmort[i] * q[i] * y[i]#
-        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
-		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
-	}#
-    return(list(y = y, Fmort = Fmort, Catch = Catch))#
-}#
-#
-#Function to specify exponential decline in a parameter to a limit#
-explimfun <- function(t, arate, mindec){#
-    initf <- exp(arate * t)#
-    (initf + mindec) - (initf*mindec)#
-}#
-#
-##
-# Simulations#
-##
-K <- 3#
-rbase <- 0.2#
-qbase <- 1#
-Emax <- 0.4#
-Fmsy <- rbase/(qbase*2)#
-Bmsy <- K/2#
-MSY <- rbase*K/4#
-tmax <- 200#
-a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
-x <- 0.2#
-Finit <- 0.2#
-Yinit <- Bmsy/2#
-#
-rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
-rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
-Fmsyr <- rdecline[tmax]/(qbase*2)#
-Knochange <- rep(K, tmax)#
-Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
-BmsyK <- Kdecline[tmax]/2#
-qnochange <- rep(qbase, tmax)#
-qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
-#plot(qincrease)#
-Fmsyq <- rbase/(qincrease[tmax]*2)#
-#
-nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
-nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
-nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
-nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-#
-nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
-nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
-##
-# Plot Kobe plot#
-##
-mycols <- colorRampPalette(c("grey90", "grey10"))#
-#
-dev.new(width = 6, height = 6)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
-abline(h = 1)#
-abline(v = 1)#
-text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
-text(0.5, 2.21, "Overfished and declining")#
-text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
-text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
-#
-dev.new(width = 8, height = 12)#
-par(mfrow = c(3,2))#
-plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
-#
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#dev.new(width = 8, height = 12)#
-ppi <- 300#
-png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
-    width = 6*ppi, height = 10*ppi)#
-#
-par(mfrow = c(3,2))#
-#
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
-plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
+cols <- RColorBrewer::brewer.pal(6, 'Blues')[4:6]#
+cols_alpha <- PlotTools::hexalpha(cols, 0.5) %>% as.character()#
+asz <- 5#
+ah <- -1#
+av <- 1#
+#
+p1 <- ggplot(rdsum, aes(x = n, y = hdMussels_mean,#
+    group = factor(sdmult),#
+    color = factor(sdmult))) +#
+    geom_ribbon(aes(ymin = hdMussels_mean - hdMussels_sd, ymax = hdMussels_mean + hdMussels_sd, fill = factor(sdmult),#
+    colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, 1, by = 0.25), limits = c(0,1)) +#
+infotheme +#
+ylab("Hellinger distance") +#
+annotate("text", x = -Inf, y =Inf, label = "a", vjust = av, hjust = ah, size = asz)#
+#
+p2 <- ggplot(rdsum, aes(x = n, y = hkMussels_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+geom_ribbon(aes(ymin = hkMussels_mean - hkMussels_sd, ymax = hkMussels_mean + hkMussels_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, ceiling(hmax$Hmax), by = 1), limits = c(0,ceiling(hmax$Hmax))) +#
+infotheme +#
+ylab("Kullback-Leibler divergence (bits)") +#
+geom_hline(yintercept = hmax$Hmax, linetype = 2) +#
+annotate("text", x = 50, y = hmax$Hmax, vjust = 1.5,#
+label = "Maximum entropy")+#
+annotate("text", x = -Inf, y =Inf, label = "b", vjust = av, hjust = ah, size = asz)#
+p3 <- ggplot(rdsum, aes(x = n, y = bias_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = bias_n_mean - bias_n_sd, ymax = bias_n_mean + bias_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(-0.35, 0.35, by = 0.1),1), limits = c(-0.35,0.35)) +#
+infotheme +#
+ylab(expression(paste("Bias for ",delta^15, "N (\u2030)",sep="")))+#
+annotate("text", x = -Inf, y =Inf, label = "c", vjust = av, hjust = ah, size = asz)#
+#
+p4 <- ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 0.4, by = 0.1),1), limits = c(0, 0.4)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)#
+#
+layout <- matrix(seq(1, 4), ncol = 2, nrow = 2, byrow = T)#
+png(filename = "isotope mixing models/remixsiar/vignettes/ms/figures/fig2.png",#
+ width = 800, height = 400)#
+#grid::grid.newpage()#
+grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow(layout), ncol(layout))))#
+print(p1, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 1))#
+print(p2, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 2))#
+print(p3, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 1))#
+print(p4, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 2))#
 dev.off()
-# Fish habitat Kobe plot#
-# CJ Brown 2017-08-15#
-# v2 has change in q#
-#
+p2
+?theme
+#Plots, eventually turn this into a child#
+#```{r}#
 rm(list = ls())#
-#
 library(ggplot2)#
+library(simmr)#
+library(purrr)#
 library(dplyr)#
+library(grid)#
+library(png)#
 #
-schafmodr <- function(t, yinit,Finit, r, k, q, x, a, Fmsy, which.mgmt = "bmsy"){#
-    y <- numeric(t)#
-	y[1] <- yinit#
-	Catch <- rep(NA, t)#
-	Fmort <- numeric(t)#
-	Fmort[1] <- Finit#
+library(RColorBrewer)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
 #
-	for(i in 1:(t-1)){#
-        if (which.mgmt == "bmsy"){#
-        Fmort[i+1] <- Fmort[i] * (y[i]/(a*K/2))^x #model where Bsmy is target#
-            } else {#
-        Fmort[i+1] <- Fmort[i] * (Fmsy/Fmort[i])^x #model where Fmsy is target#
-        }#
-        Catch[i] <- Fmort[i] * q[i] * y[i]#
-        y[i+1] <- y[i] + r[i] * y[i]*(1-(y[i]/k[i])) - Catch[i]#
-		#Catch[i] <- (Catch[i-1]/y[i-1]) * (y[i-1]/(a*(k/2)))^x * y[i]#
-	}#
-    return(list(y = y, Fmort = Fmort, Catch = Catch))#
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+load("isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")#
+#
+rdsum <- datforplots$basic#
+##
+# ggplot theme#
+##
+#
+theme_plain <- function(base_size = 12){#
+    structure(list(#
+        theme(#
+        panel.grid.major = element_blank(),#
+         panel.grid.minor = element_blank(),#
+        strip.text=element_text(hjust=0.05),#
+        strip.background = element_rect(fill='white', colour = 'white'),#
+        axis.title = element_text(size = base_size*1.1)#
+        axis.line = element_line(color = "black"),#
+        axis.ticks.length = unit(0.25, "cm"),#
+        plot.background =   element_rect(colour = "white", fill = "white"),#
+        axis.text = element_text(size = base_size * 1 ,#
+            lineheight = 1, colour = "black", vjust = 1, margin = unit(0.1, "lines")),#
+        panel.background = element_rect(fill = "white", colour = NA)#
+        )#
+      ), class = "options")#
 }#
 #
-#Function to specify exponential decline in a parameter to a limit#
-explimfun <- function(t, arate, mindec){#
-    initf <- exp(arate * t)#
-    (initf + mindec) - (initf*mindec)#
+infotheme <- list(#
+    geom_line(),#
+    theme_plain(),#
+     scale_colour_manual(values = cols,#
+        name = "SD of sources \n (relative)"),#
+    scale_fill_manual(values = cols_alpha),#
+    xlab("Sample size"),#
+    scale_x_continuous(expand = c(0.01,0),#
+    breaks = seq(0, 200, by = 25),#
+    limits = c(0, 200))#
+)#
+hmax <- 7
+##
+# Base plot#
+##
+cols <- RColorBrewer::brewer.pal(6, 'Blues')[4:6]#
+cols_alpha <- PlotTools::hexalpha(cols, 0.5) %>% as.character()#
+asz <- 5#
+ah <- -1#
+av <- 1#
+#
+p1 <- ggplot(rdsum, aes(x = n, y = hdMussels_mean,#
+    group = factor(sdmult),#
+    color = factor(sdmult))) +#
+    geom_ribbon(aes(ymin = hdMussels_mean - hdMussels_sd, ymax = hdMussels_mean + hdMussels_sd, fill = factor(sdmult),#
+    colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, 1, by = 0.25), limits = c(0,1)) +#
+infotheme +#
+ylab("Hellinger distance") +#
+annotate("text", x = -Inf, y =Inf, label = "a", vjust = av, hjust = ah, size = asz)#
+#
+p2 <- ggplot(rdsum, aes(x = n, y = hkMussels_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+geom_ribbon(aes(ymin = hkMussels_mean - hkMussels_sd, ymax = hkMussels_mean + hkMussels_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, ceiling(hmax$Hmax), by = 1), limits = c(0,ceiling(hmax$Hmax))) +#
+infotheme +#
+ylab("Kullback-Leibler divergence (bits)") +#
+geom_hline(yintercept = hmax$Hmax, linetype = 2) +#
+annotate("text", x = 50, y = hmax$Hmax, vjust = 1.5,#
+label = "Maximum entropy")+#
+annotate("text", x = -Inf, y =Inf, label = "b", vjust = av, hjust = ah, size = asz)#
+p3 <- ggplot(rdsum, aes(x = n, y = bias_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = bias_n_mean - bias_n_sd, ymax = bias_n_mean + bias_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(-0.35, 0.35, by = 0.1),1), limits = c(-0.35,0.35)) +#
+infotheme +#
+ylab(expression(paste("Bias for ",delta^15, "N (\u2030)",sep="")))+#
+annotate("text", x = -Inf, y =Inf, label = "c", vjust = av, hjust = ah, size = asz)#
+#
+p4 <- ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 0.4, by = 0.1),1), limits = c(0, 0.4)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)#
+#
+layout <- matrix(seq(1, 4), ncol = 2, nrow = 2, byrow = T)#
+png(filename = "isotope mixing models/remixsiar/vignettes/ms/figures/fig2.png",#
+ width = 800, height = 400)#
+#grid::grid.newpage()#
+grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow(layout), ncol(layout))))#
+print(p1, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 1))#
+print(p2, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 2))#
+print(p3, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 1))#
+print(p4, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 2))#
+dev.off()
+#Plots, eventually turn this into a child#
+#```{r}#
+rm(list = ls())#
+library(ggplot2)#
+library(simmr)#
+library(purrr)#
+library(dplyr)#
+library(grid)#
+library(png)#
+#
+library(RColorBrewer)#
+devtools::load_all("~/Code/isotope mixing models/remixsiar")#
+#
+load("isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+load("isotope mixing models/remixsiar/data-raw/sims/max_entropy.rda")#
+#
+rdsum <- datforplots$basic#
+##
+# ggplot theme#
+##
+#
+theme_plain <- function(base_size = 12){#
+    structure(list(#
+        theme(#
+        panel.grid.major = element_blank(),#
+         panel.grid.minor = element_blank(),#
+        strip.text=element_text(hjust=0.05),#
+        strip.background = element_rect(fill='white', colour = 'white'),#
+        axis.title = element_text(size = base_size*1.1),#
+        axis.line = element_line(color = "black"),#
+        axis.ticks.length = unit(0.25, "cm"),#
+        plot.background =   element_rect(colour = "white", fill = "white"),#
+        axis.text = element_text(size = base_size * 1 ,#
+            lineheight = 1, colour = "black", vjust = 1, margin = unit(0.1, "lines")),#
+        panel.background = element_rect(fill = "white", colour = NA)#
+        )#
+      ), class = "options")#
 }#
 #
+infotheme <- list(#
+    geom_line(),#
+    theme_plain(),#
+     scale_colour_manual(values = cols,#
+        name = "SD of sources \n (relative)"),#
+    scale_fill_manual(values = cols_alpha),#
+    xlab("Sample size"),#
+    scale_x_continuous(expand = c(0.01,0),#
+    breaks = seq(0, 200, by = 25),#
+    limits = c(0, 200))#
+)#
+hmax <- 7#
 ##
-# Simulations#
+# Base plot#
 ##
-K <- 3#
-rbase <- 0.2#
-qbase <- 1#
-Emax <- 0.4#
-Fmsy <- rbase/(qbase*2)#
-Bmsy <- K/2#
-MSY <- rbase*K/4#
-tmax <- 200#
-a <- 1 # if this is 1 then Bmey (target biomass)= Bmsy.#
-x <- 0.2#
-Finit <- 0.2#
-Yinit <- Bmsy/2#
+cols <- RColorBrewer::brewer.pal(6, 'Blues')[4:6]#
+cols_alpha <- PlotTools::hexalpha(cols, 0.5) %>% as.character()#
+asz <- 5#
+ah <- -1#
+av <- 1#
 #
-rnochange <- rep(rbase, tmax)# * exp(rnorm(tmax,sd=0.5))#
-rdecline <- rbase * explimfun(1:tmax, -0.04, 0.5)#
-Fmsyr <- rdecline[tmax]/(qbase*2)#
-Knochange <- rep(K, tmax)#
-Kdecline <- K * explimfun(1:tmax, -0.04, 0.5)#
-BmsyK <- Kdecline[tmax]/2#
-qnochange <- rep(qbase, tmax)#
-qincrease <- qbase * explimfun(1:tmax, 0.0055, 0.5) #q doubles#
-#plot(qincrease)#
-Fmsyq <- rbase/(qincrease[tmax]*2)#
+p1 <- ggplot(rdsum, aes(x = n, y = hdMussels_mean,#
+    group = factor(sdmult),#
+    color = factor(sdmult))) +#
+    geom_ribbon(aes(ymin = hdMussels_mean - hdMussels_sd, ymax = hdMussels_mean + hdMussels_sd, fill = factor(sdmult),#
+    colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, 1, by = 0.25), limits = c(0,1)) +#
+infotheme +#
+ylab("Hellinger distance") +#
+annotate("text", x = -Inf, y =Inf, label = "a", vjust = av, hjust = ah, size = asz)#
 #
-nbase_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy)#
-nbase <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nrdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy)#
-nrdecline <- schafmodr(tmax, Yinit,Finit, rdecline, Knochange, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
-nkdecline_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy)#
-nkdecline <- schafmodr(tmax, Yinit,Finit, rnochange, Kdecline, qnochange, x, a, Fmsy, which.mgmt = "fmsy")#
+p2 <- ggplot(rdsum, aes(x = n, y = hkMussels_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+geom_ribbon(aes(ymin = hkMussels_mean - hkMussels_sd, ymax = hkMussels_mean + hkMussels_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, ceiling(hmax$Hmax), by = 1), limits = c(0,ceiling(hmax$Hmax))) +#
+infotheme +#
+ylab("Kullback-Leibler divergence (bits)") +#
+geom_hline(yintercept = hmax$Hmax, linetype = 2) +#
+annotate("text", x = 50, y = hmax$Hmax, vjust = 1.5,#
+label = "Maximum entropy")+#
+annotate("text", x = -Inf, y =Inf, label = "b", vjust = av, hjust = ah, size = asz)#
+p3 <- ggplot(rdsum, aes(x = n, y = bias_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = bias_n_mean - bias_n_sd, ymax = bias_n_mean + bias_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(-0.35, 0.35, by = 0.1),1), limits = c(-0.35,0.35)) +#
+infotheme +#
+ylab(expression(paste("Bias for ",delta^15, "N (\u2030)",sep="")))+#
+annotate("text", x = -Inf, y =Inf, label = "c", vjust = av, hjust = ah, size = asz)#
 #
-nqincrease_bmsy <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy)#
-nqincrease <- schafmodr(tmax, Yinit,Finit, rnochange, Knochange, qincrease, x, a, Fmsy, which.mgmt = "fmsy")#
+p4 <- ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 0.4, by = 0.1),1), limits = c(0, 0.4)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)#
+#
+layout <- matrix(seq(1, 4), ncol = 2, nrow = 2, byrow = T)#
+png(filename = "isotope mixing models/remixsiar/vignettes/ms/figures/fig2.png",#
+ width = 800, height = 400)#
+#grid::grid.newpage()#
+grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow(layout), ncol(layout))))#
+print(p1, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 1))#
+print(p2, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 2))#
+print(p3, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 1))#
+print(p4, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 2))#
+dev.off()
+hmax <- list(Hmax = 7)
 ##
-# Plot Kobe plot#
+# Base plot#
 ##
-mycols <- colorRampPalette(c("grey90", "grey10"))#
+cols <- RColorBrewer::brewer.pal(6, 'Blues')[4:6]#
+cols_alpha <- PlotTools::hexalpha(cols, 0.5) %>% as.character()#
+asz <- 5#
+ah <- -1#
+av <- 1#
 #
-dev.new(width = 6, height = 6)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3))#
-abline(h = 1)#
-abline(v = 1)#
-text(-0.04, 0.8, "Overfished and \n recovering", pos=4)#
-text(0.5, 2.21, "Overfished and declining")#
-text(1.42, 0.8, "Underfished and \n recovering", pos = 4)#
-text(1.2, 1.4, "Underfished and \n declining", pos = 4)#
+p1 <- ggplot(rdsum, aes(x = n, y = hdMussels_mean,#
+    group = factor(sdmult),#
+    color = factor(sdmult))) +#
+    geom_ribbon(aes(ymin = hdMussels_mean - hdMussels_sd, ymax = hdMussels_mean + hdMussels_sd, fill = factor(sdmult),#
+    colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, 1, by = 0.25), limits = c(0,1)) +#
+infotheme +#
+ylab("Hellinger distance") +#
+annotate("text", x = -Inf, y =Inf, label = "a", vjust = av, hjust = ah, size = asz)#
 #
-dev.new(width = 8, height = 12)#
-par(mfrow = c(3,2))#
-plot(nbase_bmsy$y/Bmsy, nbase_bmsy$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "A: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
-plot(nbase$y/Bmsy, nbase$Fmort/Fmsy, xlab = "B/Bmsy", ylab = "F/Fmsy",#
-	bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 3), main = "B: Stock hits target")#
-abline(h = 1)#
-abline(v = 1)#
+p2 <- ggplot(rdsum, aes(x = n, y = hkMussels_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+geom_ribbon(aes(ymin = hkMussels_mean - hkMussels_sd, ymax = hkMussels_mean + hkMussels_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = seq(0, ceiling(hmax$Hmax), by = 1), limits = c(0,ceiling(hmax$Hmax))) +#
+infotheme +#
+ylab("Kullback-Leibler divergence (bits)") +#
+geom_hline(yintercept = hmax$Hmax, linetype = 2) +#
+annotate("text", x = 50, y = hmax$Hmax, vjust = 1.5,#
+label = "Maximum entropy")+#
+annotate("text", x = -Inf, y =Inf, label = "b", vjust = av, hjust = ah, size = asz)#
+p3 <- ggplot(rdsum, aes(x = n, y = bias_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = bias_n_mean - bias_n_sd, ymax = bias_n_mean + bias_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(-0.35, 0.35, by = 0.1),1), limits = c(-0.35,0.35)) +#
+infotheme +#
+ylab(expression(paste("Bias for ",delta^15, "N (\u2030)",sep="")))+#
+annotate("text", x = -Inf, y =Inf, label = "c", vjust = av, hjust = ah, size = asz)#
 #
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "C: Stock assessed as being below Fmsy but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
+p4 <- ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 0.4, by = 0.1),1), limits = c(0, 0.4)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)#
 #
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being on target, but declining")#
-abline(h = 1)#
-abline(v = 1)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually set too low")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being below Bmsy, but on target")#
-abline(h = 1)#
-abline(v = 1)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#dev.new(width = 8, height = 12)#
-ppi <- 300#
-png(filename = "GlobalFishStatus/results/kobe-plot.png", res = ppi,#
-    width = 6*ppi, height = 10*ppi)#
-#
-par(mfrow = c(3,2))#
-#
-plot(nrdecline_bmsy$y/Bmsy, nrdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "A: Stock assessed as being below \n Fmsy but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nrdecline$y/Bmsy, nrdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "B: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyr/Fmsy, col = "red", lty = 2)#
-#
-plot(nkdecline_bmsy$y/Bmsy, nkdecline_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "C: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nkdecline$y/Bmsy, nkdecline$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "D: Stock assessed as being below \n Bmsy, but on target")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(h = 1, col = "red", lty = 2)#
-abline(v = BmsyK/Bmsy, col = "red", lty = 2)#
-#
-plot(nqincrease_bmsy$y/Bmsy, nqincrease_bmsy$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), , main = "E: Catch rates continually \n set too low")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
-plot(nqincrease$y/Bmsy, nqincrease$Fmort/Fmsy, cex = 0.6, xlab = "B/Bmsy", ylab = "F/Fmsy",bg = mycols(tmax), pch = 21, xlim = c(0, 2), ylim = c(0, 4), main = "F: Stock assessed as being on \n target, but declining")#
-abline(h = 1, lwd = 2)#
-abline(v = 1, lwd = 2)#
-abline(v = 1, col = "red", lty = 2)#
-abline(h = Fmsyq/Fmsy, col = "red", lty = 2)#
-#
-dev.off()#
-######################
-#
-dev.new(width = 8, height = 4)#
-par(mfrow = c(1,3))#
-plot(nbase$Fmort, nbase$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-plot(nrdecline$Fmort, nrdecline$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-plot(nkdecline$Fmort, nkdecline$Catch, type = 'l')#
-abline(v = Fmsy)#
-abline(h = MSY)#
-#
-dev.new(width = 8, height = 6)#
-par(mfrow = c(3,2))#
-plot(1:tmax, nbase$y, type = 'l')#
-plot(1:tmax, nbase$Fmort, type = 'l')#
-plot(1:tmax, nrdecline$y, type = 'l')#
-plot(1:tmax, nrdecline$Fmort, type = 'l')#
-plot(1:tmax, nkdecline$y, type = 'l')#
-plot(1:tmax, nkdecline$Fmort, type = 'l')
-(0.4 + 7.1 + 1.2 + 8.3)/36.6
-#CE schematic #
-#CJ Brown 22 Dec 2016  #
-#
+layout <- matrix(seq(1, 4), ncol = 2, nrow = 2, byrow = T)#
+png(filename = "isotope mixing models/remixsiar/vignettes/ms/figures/fig2.png",#
+ width = 800, height = 400)#
+#grid::grid.newpage()#
+grid::pushViewport(grid::viewport(layout = grid::grid.layout(nrow(layout), ncol(layout))))#
+print(p1, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 1))#
+print(p2, vp = grid::viewport(layout.pos.row = 1, layout.pos.col = 2))#
+print(p3, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 1))#
+print(p4, vp = grid::viewport(layout.pos.row = 2, layout.pos.col = 2))#
+dev.off()
+rdsum
+rdsum$rmse_n_mean
+ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 0.4, by = 0.1),1), limits = c(0, 0.4)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)
+ggplot(rdsum, aes(x = n, y = rmse_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = rmse_n_mean - rmse_n_sd, ymax = rmse_n_mean + rmse_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(0, 1.6, by = 0.1),1), limits = c(0, 1.6)) +#
+infotheme +#
+ylab(expression(paste("RMSE for ",delta^15, "N (\u2030)",sep=""))) +#
+annotate("text", x = -Inf, y =Inf, label = "d", vjust = av, hjust = ah, size = asz)
+ggplot(rdsum, aes(x = n, y = bias_n_mean, group = factor(sdmult),#
+color = factor(sdmult))) +#
+ geom_ribbon(aes(ymin = bias_n_mean - bias_n_sd, ymax = bias_n_mean + bias_n_sd, fill = factor(sdmult),#
+colour = NA), show.legend = FALSE) +#
+scale_y_continuous(expand = c(0.01, 0),#
+breaks = round(seq(-0.35, 0.35, by = 0.1),1), limits = c(-0.35,0.35)) +#
+infotheme +#
+ylab(expression(paste("Bias for ",delta^15, "N (\u2030)",sep="")))+#
+annotate("text", x = -Inf, y =Inf, label = "c", vjust = av, hjust = ah, size = asz)
+rdsum
+rdsum$bias_n_sd
 rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot #
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Forest protected', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)	#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'), #
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved \n assuming equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved assuming \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.45, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.2, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-?par
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8), mgp = c(3,0.5, 0))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8), mgp = c(3,0.2, 0))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(3,0.2, 0))#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(3,0, 0))#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1], mgp = c(1,0, 0))#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(1,0, 0))#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols)#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-#CE schematic#
-#CJ Brown 22 Dec 2016#
-#
-rm(list = ls())#
-#
-library(RColorBrewer)#
-#
-high <- c(1, 0, 0)#
-med <- c(0.7, 0.15, 0.15)#
-low <- c(1/3, 1/3, 1/3)#
-#
-budget <- 1/3#
-spend <- rep(budget, 3)#
-#
-outhigh <- sum(ifelse(high>budget, budget, high))#
-outmed <- sum(ifelse(med>budget, budget, med))#
-outlow <- sum(ifelse(low>budget, budget, low))#
-#
-outcomes <- c(outhigh, outmed, outlow)#
-#
-##
-# Plot#
-##
-x <- c(0.7, 1.9, 3.1)#
-xleft <- c(0.2, 1.4, 2.6)#
-xright <- c(1.2, 2.4, 3.6)#
-ylims <- c(0,1)#
-cols <- c('SeaGreen','LightBlue')#
-xnams <- c('High \n variation','Medium \n variation','Low \n variation')#
-snames <- 1:3#
-#
-mat <- matrix(c(1,2,3,4,4,4), nrow = 2, ncol = 3, byrow = T)#
-#
-dev.new(width =4, height = 3)#
-layout(mat)#
-#
-par(mar = c(3,2,2,2))#
-#
-barplot(rbind(high, 1-high), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(med, 1-med), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
-rect(xleft, 0, xright, budget)#
-#
-barplot(rbind(low, 1-low), names = snames, border = NA, ylim = ylims, yaxt = 'n', col = cols, mgp = c(3,0.1, 0))#
-rect(xleft, 0, xright, budget)#
-#
-par(mar = c(3,8,1,8))#
-#
-barplot(outcomes, yaxt = 'n', names = xnams, col = cols[1])#
-axis(2, at = c(0,1), labels = F)#
-#
-text(-1.74, 1.98, 'Land area', srt = 90, xpd = NA)#
-text(-0.3, 0.5, 'Outcome achieved with \n equitable allocation', srt = 90, xpd = NA)#
-#
-labs <- c('High variation','Medium variation','Low variation')#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 2.55, labs[i], xpd = NA, font = 2)#
-	}#
-#
-for (i in 1:3){#
-	text(-0.71+ ((i-1)*2.6), 1.3, 'Stakeholders', xpd = NA)#
-	}#
-#
-abline(h = 0.46, lty=2)#
-text(0.67, 0.64, 'Protection \n target')#
-#
-legend(4.05, 0.97, legend = c('Forest','Unforested','Protected'),#
-border = c(NA, NA, 'black'), fill = c(cols[1], cols[2], NA), xpd = NA)
-35.9/279.5
-37.8+18.%
-37.8+18.5
-log2(12)
-log(12)
-(0.5 * log2(0.5))
-(-0.5 * log2(0.5))
-log2(2^14)
-installed <- dir(.libPaths())
-installed
-save(installed, file = file.path("~/Code/", paste0(Sys.Date(), '-installed.Rdata')))
-library(INLA)
-install.packages("INLA", repos="https://inla.r-inla-download.org/R/stable")
-library(INLA)
-install.packages("sp")
-install.packages("matrix")
-install.packages("Matrix")
-library(INLA)
-15*((4*4))
-matrix(rep(1, 4), nrow = 1) %*% matrix(rep(2,4),ncol=1)
-# ----------------------------------------------- ##
-# Prep data for latent variable model#
-# ----------------------------------------------- ##
-##
-# CJ Brown 13 Jun 2017#
-##
-# Aggregate to avoid groups with many zeros#
-#
-rm(list = ls())#
-library(dplyr)#
+library(purrr)#
+library(devtools)#
+library(jagstools)#
 library(tidyr)#
-library(readr)#
+library(ggplot2)#
+library(stringr)#
+library(PlotTools)#
+library(dplyr)#
+library(forcats)#
+library(sp)#
+library(rgdal)
+library(raster)
+load_all('~/Code/BenthicLatent')
+install.packages(jagstools, dependencies = T)
+install.packages("jagstools", dependencies = T)
+devtools::install_github("https://github.com/johnbaums/jagstools")
+?devtools::install_github
+devtools::install_github("johnbaums", "jagstools")
+load_all('~/Code/BenthicLatent')
+.libs()
+libs()
+.lib()
+?library
+.libPaths()
+# Plots for gulls simulations#
+# CJ Brown 16 Feb 2017#
+#
+rm(list = ls())#
+library(simmr)#
+library(purrr)#
+library(dplyr)
+devtools::load_all("~/Code/isotope mixing models/remixsiar")
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls.Rdata")
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/Multi_n_runs_gulls_infprior.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_biased.Rdata")#
+load("isotope mixing models/remixsiar/data-raw/sims/dfin_infprior.Rdata")#
+#
+load("isotope mixing models/remixsiar/data-raw/sims/gulls_informative_prior.RData")#
+#
+sdat <- read.csv("isotope mixing models/remixsiar/data-raw/gull_sources.csv")#
+#
+##
+# Plot results from equivalent runs#
+##
+#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], "boxplot")#
+dev.new(); plot(gulls_multirun_infprior[[which(dfin2$n==40)[1]]][[2]], "boxplot")#
+##
+# gulls example plot#
+##
+#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[1]])#
+dev.new(); plot(gulls_multirun[[which(dfin$sdmult == 1 & dfin$n==40)[1]]][[2]], 'density')#
+##
+# Max KL#
+##
+#
+gpd <- drawpriors(gulls_multirun[[1]]$gulls_in,  default_prior(gulls_multirun[[1]]$gulls_in))#
+xy <- hist(gpd$Krill, breaks = 101, plot = F)#
+ntot <- sum(xy$counts)#
+Hmax <- -sum((xy$counts / ntot) * log2(xy$counts/ntot))#
+#
+calcmkl <- function(mod_run, dp = NULL){#
+    if (is.null(dp)){#
+    dp <- default_prior(mod_run[[1]])#
+        }#
+    xout <- remix_mkldiv(mod_run[[2]], dp, plot.dens = FALSE,nbreaks = 101, minx = 0, maxx = 1)#
+    return(xout)#
+}
+gulls_multirun[[1]]$gulls_in
+gulls_multirun
+rout <- map(1:length(gulls_multirun), ~calchell(gulls_multirun[[.x]]))
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin)#
+#
+kout <- map(1:length(gulls_multirun), ~calckl(gulls_multirun[[.x]]))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun), ~calcvarbia(gulls_multirun[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin) %>% left_join(kdf)
+kmvout <- map(1:length(gulls_multirun), ~calcmkl(gulls_multirun[[.x]]))
+kmvdf <- do.call(rbind, kmvout) %>% data.frame() %>%#
+ cbind(dfin) %>% left_join(vbdf)
+kmvdf
+head(kmvdf)
+head(vbdf)
+rdsum <- kmvdf %>% group_by(n, sdmult) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))
+warnings()
+kmvdf %>% group_by(n, sdmult)
+head(kmvdf)
+class(kmvdf$hdist)
+str(kmvdf$hdist)
+str(kmvout)
+kmvout[[1]]
+str(kmvout[[1]])
+kmvout[[1]][1]
+kmvout[[1]][[1]]
+kmvdf <- kmvout %>% map(~pluck(.x, "kldist")) %>%#
+    unlist(kmvout) %>% data.frame() %>%#
+    setNames("mvkld") %>% cbind(dfin) %>% left_join(vbdf)
+head(kmvdf)
+str(kmvdf$mvkld)
+kmvdf <- kmvout %>% map(~pluck(.x, c("kldist", "hdist"))) %>%#
+    unlist(kmvout) %>% data.frame() %>%#
+    setNames("mvkld") %>% cbind(dfin) %>% left_join(vbdf)
+?pluck
+kmvout %>% map(~pluck(.x, "kldist")) %>%#
+    unlist(kmvout)
+kld
+kmvout %>% map(~pluck(.x, "kldist")) %>%#
+    unlist(kmvout)
+hdist <- kmvout %>% map(~pluck(.x, "hdist")) %>%#
+    unlist(kmvout)
+hdist
+kld <- kmvout %>% map(~pluck(.x, "kldist")) %>%#
+    unlist(kmvout)#
+hdist <- kmvout %>% map(~pluck(.x, "hdist")) %>%#
+    unlist(kmvout)#
+kmvdf <-  data.frame(hdist = hdist, mvkld = kld) %>%#
+    cbind(dfin) %>% left_join(vbdf)
+rdsum <- kmvdf %>% group_by(n, sdmult) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))
+rdsum
+ggplot(rdsum, aes(x = n, y = hdist_mean,color = sdmult)) + geom_point()
+datforplots <- list(basic = rdsum)
+gpd <- drawpriors(gulls_multirun_infprior[[1]]$dat_in,  ginfprior)#
+#
+Hmax_inf <- rep(NA, 3)#
+for(i in 1:3){#
+    xy <- hist(gpd[,i], breaks = 101, plot = F)#
+    ntot <- sum(xy$counts)#
+    Hmax_inf[i] <- -sum(na.omit((xy$counts / ntot) * log2(xy$counts/ntot)))#
+}
+rout <- map(1:length(gulls_multirun_infprior), ~calchell(gulls_multirun_infprior[[.x]], dp = ginfprior))#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin2)#
+#
+kout <- map(1:length(gulls_multirun_infprior), ~calckl(gulls_multirun_infprior[[.x]], dp = ginfprior))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin2) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun_infprior), ~calcvarbia(gulls_multirun_infprior[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin2) %>% left_join(kdf)
+kmvout <- map(1:length(gulls_multirun_infprior), ~calcmkl(gulls_multirun_infprior[[.x]]))#
+ kld <- kmvout %>% map(~pluck(.x, "kldist")) %>%#
+     unlist(kmvout)#
+ hdist <- kmvout %>% map(~pluck(.x, "hdist")) %>%#
+     unlist(kmvout)#
+ kmvdf <-  data.frame(hdist = hdist, mvkld = kld) %>%#
+     cbind(dfin2) %>% left_join(vbdf)
+rdsum <- kmvdf %>% group_by(n) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))
+rdsum
+datforplots <- c(datforplots, list(infprior = rdsum))
+rout <- map(1:length(gulls_multirun_biased), ~calchell(gulls_multirun_biased[[.x]]))#
+rdf <- do.call(rbind, rout) %>% data.frame() %>%#
+setNames(paste0('hd', as.character(sdat$source))) %>%#
+ cbind(dfin2)#
+#
+kout <- map(1:length(gulls_multirun_biased), ~calckl(gulls_multirun_biased[[.x]]))#
+#
+kdf <- do.call(rbind, kout) %>% data.frame() %>%#
+setNames(paste0('hk', as.character(sdat$source))) %>%#
+ cbind(dfin2) %>% left_join(rdf)#
+#
+vbout <- map(1:length(gulls_multirun_biased), ~calcvarbia(gulls_multirun_biased[[.x]]))#
+vbdf <- do.call(rbind, vbout) %>% data.frame() %>%#
+ cbind(dfin2) %>% left_join(kdf)#
+#
+ kmvout <- map(1:length(gulls_multirun_biased), ~calcmkl(gulls_multirun_biased[[.x]]))#
+ kld <- kmvout %>% map(~pluck(.x, "kldist")) %>%#
+     unlist(kmvout)#
+ hdist <- kmvout %>% map(~pluck(.x, "hdist")) %>%#
+     unlist(kmvout)#
+ kmvdf <-  data.frame(hdist = hdist, mvkld = kld) %>%#
+     cbind(dfin2) %>% left_join(vbdf)#
+rdsum <- kmvdf %>% group_by(n) %>%#
+summarize_all(funs(mean, sd)) %>% select(-contains("seed"))#
+#
+datforplots <- c(datforplots, list(biased = rdsum))
+save(datforplots,#
+    file = "isotope mixing models/remixsiar/data-raw/sims/GullsSummary.rda")#
+hmax <- list(Hmax = Hmax, Hmax_inf = Hmax_inf)
+load("/Users/s2973410/Code/BenthicLatent/data-raw/area_reef_change.rda")
+datareas
+# ---------------#
+# Prepare baselayers for mapping#
+# ---------------#
+# CJ Brown 16 Jun 2017#
+# This version just uses inverse probit transform#
+#
+rm(list = ls())#
+library(devtools)#
+library(jagstools)#
+library(tidyr)#
+library(PlotTools)#
+library(dplyr)#
+library(sp)#
 library(rgdal)#
 library(raster)#
+library(RColorBrewer)#
+library(png)#
+library(maptools)#
+library(purrr)#
 #
-library(devtools)#
-load_all('~/Code/BenthicLatent/')#
+# ---------------#
+# Parameters#
+# ---------------#
+#Quantiles for area affected#
+quants <- c(0.95, 0.75, 0.5, 0.25)#
 #
+# ---------------#
+# Load data#
+# ---------------#
+#
+load_all('~/Code/BenthicLatent')#
+data(lv_input)#
+data(gdist)#
 setwd('/Users/s2973410/Code/BenthicLatent/data-raw')#
-##
-# Data#
-##
 #
-dat <- read_csv('JuvUVCSites_with_ReefTypes_16Jun2016.csv')#
+sitesdf <- read.csv('JuvUVCSites_with_ReefTypes_16Jun2016.csv')#
 #
-head(dat)#
-nsites <- nrow(dat)#
+num_levels <- 2#
+savname <- paste0('BLM_numlv', num_levels,'_v3.RData')#
+load(savname)#
 #
-bendat <- read_csv('BenthicCoverSurveys.csv')#
-#
-nhabs <- length(unique(bendat$code))#
-#
-# Site 46, transect 5 is missing three points#
-bendat[7120,'cover'] <- 14#
-# filter(bendat, site ==46) %>% data.frame()#
-bendat$n.pts <- 75#
-bencodes <- read_csv('benthic_codes.csv') %>% distinct()#
-write.csv(bencodes, "Benthic_Variables.csv", row.names = F)#
-##
-# Distance to log ponds#
-##
-#
+reefs <- readOGR("Kia reefs", "Reef_Strata_Kia")#
+land <- readOGR("LandPoly", "LandPoly")#
 ponds <- readOGR("Kia_Logging_Ponds", "Kia_Logging_Ponds")#
 landuse <- raster('GRID_sol_update/sol_update')#
 #
-landsea <- landuse#
-landsea[landuse ==7 | landuse ==4] = 1#
-landsea[landuse !=7 & landuse !=4] = NA#
+SI <- readOGR("SI_admin", "SLB_adm1") #shapefile of SI#
+# see http://www.diva-gis.org/datadown to download this.#
+SI <- rgeos::gSimplify(SI, 0.01)#
+#
+narr <- readPNG("north-arrow-2.png")#
+arrrat <- dim(narr)[1]/dim(narr)[2]#
+#
+#New log ponds#
+newponds <- data.frame(rbind(c(-7.43639, 158.19973), c(-7.42830, 158.20321), c(-7.42558, 158.20111)))#
+coordinates(newponds) <- ~X2 + X1#
+proj4string(newponds) <- CRS('+init=epsg:4326')#
+newpondsutm <- spTransform(newponds, crs(land))#
+#
+##
+# Filter and transform reefs#
+##
+juvhab <- c('Lagoon exposed fringing - reef flat', 'Intra-lagoon patch-reef complex - subtidal reef flat')#
+reefs2 <- spTransform(reefs, CRS(proj4string(ponds))) %>%#
+    subset(C_L3Att_L4 %in% juvhab)#
+#plot(reefs2)#
+#plot(land, col = "wheat")#
+#plot(ponds, col = 'red', add = T)#
+#plot(landuse)#
+#
+# ---------------#
+# Distance raster#
+# ---------------#
+#
+##
+# Code to estimate distances#
+##
+#
+#landsea <- landuse#
+#landsea[landuse ==7 | landuse ==4] = 1#
+#landsea[landuse !=7 & landuse !=4] = NA#
 # plot(landsea, maxpixels = 5000)#
-#
-#Change this to use a finer resolution.#
 #ls2 <- aggregate(landsea, fact = 5)#
-ls2 <- landsea#
-iloc <- cellFromXY(ls2, ponds)#
-ls2[iloc] <- 2#
-#
+#ls2 <- landsea#
+#iloc <- cellFromXY(ls2, ponds)#
+#ls2[iloc] <- 2#
+#ls3 <- ls2#
+#iloc2 <- cellFromXY(ls3, newpondsutm)#
+#ls3[iloc2] <- 2#
 #takes about 30 seconds for full res, <1 second for aggregation at factor 5#
-system.time(gdist <- gridDistance(ls2, origin = 2, omit  = NA))#
-#
-#Buffer points at diam slightly larger than pixel size, to make sure you get a value#
-dat$mindist <- raster::extract(gdist, cbind(dat$coordx, dat$coordy), buffer = 50, fun = mean, na.rm = T)#
+#system.time(gdist2 <- gridDistance(ls3, origin = 2, omit  = NA))#
+#devtools::use_data(gdist2, pkg = "~/Code/BenthicLatent")#
 #
 ##
-# Summarise bendat by sites#
+# Here's a distane layer prepared earlier#
+##
+data(gdist2)#
+plot(gdist)#
+plot(reefs2, add = T)#
+#
+dev.new()#
+plot(gdist2)#
+plot(reefs2, add = T)#
+#
+rreef <- rasterize(reefs2, gdist)#
+rreefdist <- mask(gdist, rreef)#
+#
+plot(rreefdist)#
+#
+# ---------------#
+# Distance layer#
+# ---------------#
+#
+#Transform distances to same scale as used in model#
+rX1 <- (gdist - lv_input$mndist)/lv_input$sddist#
+xfrommodel <- lv_input$mindists#
+gmax <- max(xfrommodel)#
+gmin <- min(xfrommodel)#
+rX1[rX1 > gmax] <- gmax#
+rX1[rX1 < gmin] <- gmin#
+plot(rX1)#
+plot(reefs2, add = T)#
+#
+#Distances for new log ponds#
+rX1new <- (gdist2 - lv_input$mndist)/lv_input$sddist#
+rX1new[rX1new > gmax] <- gmax#
+rX1new[rX1new < gmin] <- gmin#
+plot(rX1new)#
+plot(reefs2, add = T)#
+#
+#Check Transform#
+plot(raster::extract(rX1, cbind(sitesdf$coordx, sitesdf$coordy)), xfrommodel)#
+abline(0,1)#
+#
+# -------------------#
+# Bayes model params#
+# -------------------#
+colnams <- dimnames(mcout3[[1]])[[2]]#
+igam <- stringr::str_detect(colnams, '\\bgamma\\b')#
+igamf <- stringr::str_detect(colnams, 'gammaf')#
+mcmat <- as.matrix(mcout3[[1]])#
+gamma1 <-  mcmat[,igam]#
+gammaf <- mcmat[,igamf]#
+gmode <- quantile(gamma1, 0.5)#
+g025 <- quantile(gamma1, 0.025)#
+g975 <- quantile(gamma1, 0.975)#
+gfmode <- quantile(gammaf, 0.5)#
+#
+head(mcout3[[1]])#
+#
+# ---------------#
+# Predict latent variable spatially#
+# ---------------#
+#
+##
+# Conceptual dev#
+##
+dseq <- seq(gmin, gmax, length.out = 10)#
+px <- 1 - pnorm(gmode * dseq, mean = 0, sd = 1)#
+px2 <- 1 - pnorm(g025 * dseq, mean = 0, sd = 1)#
+plot(2 * dseq ,1 - pnorm(2 * dseq, mean = 0, sd = 1), type = 'l', ylim = c(0,1), lwd = 2)#
+lines(0.1 * dseq, 1 - pnorm(0.1 * dseq, mean = 0, sd = 1), col = "red", lty = 2, lwd = 2)#
+points(gmode * dseq, px, col = "darkgreen", pch = 16)#
+##
+# Probit transfrom#
 ##
 #
-#Check points are correct#
-bcount <- bendat %>% group_by(site) %>%#
-summarize(tot = sum(cover))#, totn = sum(n.pts)/nhabs)#
+rprobit <- rprobit025 <- rprobit975 <- raster(rX1)#
+rprobit[] <- 1 - pnorm(gmode * rX1[], mean = 0, sd = 1)#
+rprobit025[] <- 1 - pnorm(g025 * rX1[], mean = 0, sd = 1)#
+rprobit975[] <- 1 - pnorm(g975 * rX1[], mean = 0, sd = 1)#
 #
-data.frame(bcount)#
-benthic_summary <- bendat %>% group_by(site, code) %>%#
-summarize(pts = sum(cover)) %>% left_join(bcount) %>%#
-mutate(cov = pts/tot) %>%#
-dplyr::select(site, code, pts) %>%#
-spread(code, pts, fill = 0) %>%#
-ungroup() %>%#
-left_join(bcount)#
+rprobit_new <- rprobit_new025 <- rprobit_new975 <- raster(rX1)#
+rprobit_new[] <- 1 - pnorm(gmode * rX1new[], mean = 0, sd = 1)#
+rprobit_new025[] <- 1 - pnorm(g025 * rX1new[], mean = 0, sd = 1)#
+rprobit_new975[] <- 1 - pnorm(g975 * rX1new[], mean = 0, sd = 1)#
 #
-dplyr::select(benthic_summary, -site, - tot) %>% rowSums()#
-##
-# Freq of occurrence, to select variables#
-##
+plot(rprobit)#
+plot(rprobit025)#
+plot(rprobit975)#
 #
-bentbl <- benthic_summary %>%#
-  summarize_all(function(x) signif(sum(x>0)/sum(x>=0),2)) %>%#
-  gather(CODE, freqency) %>%#
-  left_join(bencodes)#
+# ---------------#
+# Crop latent variable.#
+# ---------------#
+r2 <- mask(rprobit, rreef)#
+r2_025 <- mask(rprobit025, rreef)#
+r2_975 <- mask(rprobit975, rreef)#
+r2new <- mask(rprobit_new, rreef)#
+r2new_025 <- mask(rprobit_new025, rreef)#
+r2new_975 <- mask(rprobit_new975, rreef)#
 #
-# bentbl %>% filter(freqency<0.6) %>%  data.frame()#
- bentbl %>%  data.frame()#
+eregion <- extent(393286.9, 455857.4, 9136901, 9189922)#
+rcrop <- crop(rprobit, eregion)#
+rcropnew <- crop(rprobit_new, eregion)#
 #
-##
-# Select variables#
-##
- datsa <- benthic_summary %>%#
-mutate(branching_dead = ACBD + CBD,#
-algal_assemblage = DCA + AA,#
-coral_submassive = ACS + CS,#
-coral_other = ACD + ACE + CE + CF + CMR + SC,#
-coral_rare = CHL + CME + CTU + CA,#
-rock = R + RCK,#
-unconsolidated = SI + S,#
-other = SP + ZO#
-) %>%#
-dplyr::select(-ACBD, -CBD, -DCA, -AA, - ACS, -CS, -ACD, -ACE, -CE, -CF,-CHL,-CMR, -SC, -CHL, -CME, -CTU, -CA, -R, -RCK, -SI,-S, -SP, -ZO)#
+# ---------------#
+# Estimates of area affected#
+# ---------------#
+nreefs <- sum(!is.na(r2[]), na.rm = T)#
+(area1 <- map_dbl(quants, ~sum(r2[] >= .x, na.rm = T)/nreefs))#
+(area1_025 <- map_dbl(quants, ~sum(r2_025[] >= .x, na.rm = T)/nreefs))#
+(area1_975 <- map_dbl(quants, ~sum(r2_975[] >= .x, na.rm = T)/nreefs))#
+#new reefs#
+(areanew <- map_dbl(quants, ~sum(r2new[] >= .x, na.rm = T)/nreefs))#
+(areanew_025 <- map_dbl(quants, ~sum(r2new_025[] >= .x, na.rm = T)/nreefs))#
+(areanew_975 <- map_dbl(quants, ~sum(r2new_975[] >= .x, na.rm = T)/nreefs))#
 #
-dplyr::select(datsa, -site, -tot) %>% rowSums() #should all be the same = 375
-ls(
-)
-bendat
-dat
-#Centre y - matrix of habitats at sites#
-y <- dplyr::select(datsa, -site, -tot) %>% as.matrix()#
-npts <- as.numeric(benthic_summary$tot)
-y
-head(y)
-y[,1]
-m1 <- glm(y[,1] ~ dat$mindist, family = "poisson")
-plot(m1)
-plot(dat$mindist, predict(m1, type = "response"))
-points(dat$mindist, y[,1], pch = 16)
-plot(dat$mindist, predict(m1, type = "response"), ylim = c(0, 60))
-points(dat$mindist, y[,1], pch = 16)
-plot(dat$mindist, predict(m1, type = "response"), ylim = c(0, 100))
-points(dat$mindist, y[,1], pch = 16)
-max(y[,1])
-plot(dat$mindist, predict(m1, type = "response"), ylim = c(0, 210))
-points(dat$mindist, y[,1], pch = 16)
-plot(dat$mindist/1000, predict(m1, type = "response"), ylim = c(0, 210))
-points(dat$mindist/1000, y[,1], pch = 16)
+#additional area affected, hectares:#
+quants
+(prod(res(r2new)) * nreefs * areanew)
+(prod(res(r2new)) * nreefs * areanew)/10000
+((prod(res(r2new)) * nreefs * areanew) - (prod(res(r2new)) * nreefs * area1)) / 10000
+areanew
+(prod(res(r2new)) * nreefs * area1)
+(prod(res(r2new)) * nreefs * area1)/10000
+area1
+quants
+citation("BenthicLatent")
+load_all('~/Code/BenthicLatent/')
+citation("BenthicLatent")
+citation("BenthicLatent")
+citation("BenthicLatent")

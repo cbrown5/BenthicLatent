@@ -5,8 +5,12 @@ Version: 1.0
 Date: 2017-09-27
 Author: Christopher J. Brown
 Maintainer: Chris Brown <christo.j.brown@gmail.com>
-Description: Fits a latent variable model to indicator species (or habitats) to estimate the effects of a latent threat on the species and how the latent threat varies with environmental drivers.
-Citation: Brown, Hamilton. 2017. Estimating the footprint of pollution on coral reefs using models of species turn-over. doi: https://doi.org/10.1101/157297
+Description: Fits a latent variable model to indicator species (or habitats) to
+    estimate the effects of a latent threat on the species and
+    how the latent threat varies with environmental drivers.
+    Citation: Brown, Hamilton. 2017. Estimating the footprint of pollution on
+    coral reefs with models of species turn-over.
+    Conservation Biology. doi: 10.1111/cobi.13079
 License:  GPL (>=3)
 LazyData: false
 Depends:

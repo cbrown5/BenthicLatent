@@ -1,5 +1,5 @@
 # ----------------------------------------------- #
-# Compare benthic latent model results to other methods 
+# Compare benthic latent model results to other methods
 # ----------------------------------------------- #
 #
 # CJ Brown 2017-09-21
@@ -25,7 +25,7 @@ num_levels <- 2
 savname <- paste0('BLM_numlv', num_levels,'_v3.RData')
 load(savname)
 #
-# Get results from LV model 
+# Get results from LV model
 #
 
 smc <- summary(mcout3)
@@ -40,7 +40,7 @@ sitelwr <- smc[[2]][inuwq,1]
 siteupr <- smc[[2]][inuwq,5]
 
 #
-# input variables 
+# input variables
 #
 y <- lv_input$y
 sqrty <- sqrt(lv_input$y)
@@ -51,7 +51,7 @@ mindists <- (lv_input$mindists * lv_input$sddist) + lv_input$mndist
 
 
 #
-# MDS method 
+# MDS method
 #
 
 mds <- metaMDS(sqrty, distance = "bray", k = 2, autotransform = FALSE)
@@ -62,10 +62,10 @@ ord.fit
 plot(ord.fit)
 
 par(mfrow = c(1,2))
-plot(mds$species[,1], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings", 
+plot(mds$species[,1], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings",
      main = "MDS1", pch = 16, ylim = c(-5, 3))
 arrows(mds$species[,1], spplwr, mds$species[,1], sppupr, length = 0)
-plot(mds$species[,2], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings", 
+plot(mds$species[,2], spp_loadings, xlab = "MDS habitat ordination", ylab = "Bayesian habitat loadings",
      main = "MDS2", pch = 16, ylim = c(-5, 3))
 arrows(mds$species[,2], spplwr, mds$species[,2], sppupr, length = 0)
 text(-2.15, -2.62, "Halimeda algae", pos = 1, cex = 0.8, xpd = NA)
@@ -73,10 +73,10 @@ text(0.68, -2.78, "Halimeda algae", pos = 2, cex = 0.8)
 
 
 par(mfrow = c(1,2))
-plot(mds$points[,1], site_loadings, xlab = "MDS site ordination", ylab = "Bayesian site weights", 
+plot(mds$points[,1], site_loadings, xlab = "MDS site ordination", ylab = "Bayesian site weights",
      main = "MDS1", pch = 16, ylim = c(-2, 3))
 arrows(mds$points[,1], sitelwr, mds$points[,1], siteupr, length = 0)
-plot(mds$points[,2], site_loadings, xlab = "MDS site ordination", ylab = "Bayesian site weights", 
+plot(mds$points[,2], site_loadings, xlab = "MDS site ordination", ylab = "Bayesian site weights",
      main = "MDS2", pch = 16, ylim = c(-2, 3))
 arrows(mds$points[,2], sitelwr, mds$points[,2], siteupr, length = 0)
 
@@ -86,7 +86,7 @@ plot(site_loadings, mds$points[,2])
 plot(site_loadings, mds$points[,3])
 
 #
-# Distance gradient method 
+# Distance gradient method
 #
 s <- as.vector(1 - vegdist(sqrty, method = "bray"))
 d <- as.vector(dist(mindists, method = "euclidean"))
@@ -96,7 +96,7 @@ plot(d, s)
 
 
 #
-# PCA 
+# PCA
 #
 
 pca <- prcomp(invlogity, scale = T)
@@ -108,7 +108,7 @@ summary(lm(pca$x[,3] ~ mindists + flow))
 
 
 #
-# CCA 
+# CCA
 #
 ccamod <- cca(y ~ mindists + flow)
 plot(ccamod)
@@ -126,7 +126,7 @@ arrows( sccamod$species[,1], spplwr,  sccamod$species[,1], sppupr, length = 0)
 text(0.49, -2.78, "Halimeda algae", pos = 2, cex = 0.8)
 text(0.46, -0.04, "Algal assemblage", pos = 2, cex = 0.8, srt = 320)
 
-plot(sccamod$sites[,1], site_loadings, xlab = "CCA site loadings", ylab = "Bayesian site loadings", 
+plot(sccamod$sites[,1], site_loadings, xlab = "CCA site loadings", ylab = "Bayesian site loadings",
        pch = 16, ylim = c(-3, 3))
 arrows( sccamod$sites[,1], sitelwr,  sccamod$sites[,1], siteupr, length = 0)
 cor(sccamod$sites[,1], site_loadings) ^ 2
@@ -136,9 +136,9 @@ plot(spp_loadings, sccamod$species[,1]) # most of variation here.
 plot(sccamod$sites[,1], site_loadings)
 
 par(mfrow = c(1,2))
-plot(mindists/1000, lv_input$y[,11], xlab = "Distance to nearest log pond (km)", ylab = "Abundance count", 
+plot(mindists/1000, lv_input$y[,11], xlab = "Distance to nearest log pond (km)", ylab = "Abundance count",
      pch = 16, main = "Halimeda algae")
-plot(mindists/1000, lv_input$y[,3], xlab = "Distance to nearest log pond (km)", ylab = "Abundance count", 
+plot(mindists/1000, lv_input$y[,3], xlab = "Distance to nearest log pond (km)", ylab = "Abundance count",
      pch = 16, main = "Algal assemblage")
 
 
@@ -146,10 +146,10 @@ plot(mindists/1000, lv_input$y[,3], xlab = "Distance to nearest log pond (km)", 
 library(ggplot2)
 dat <- data.frame(d = mindists, HA = lv_input$y[,11], AA = lv_input$y[,3])
 
-ggplot(dat, aes(x = d, y = HA)) + 
-    geom_point() + 
+ggplot(dat, aes(x = d, y = HA)) +
+    geom_point() +
     stat_smooth(method = "glm", method.args = list(family = "poisson"))
 
-ggplot(dat, aes(x = d, y = AA)) + 
-  geom_point() + 
+ggplot(dat, aes(x = d, y = AA)) +
+  geom_point() +
   stat_smooth(method = "glm", method.args = list(family = "poisson"))

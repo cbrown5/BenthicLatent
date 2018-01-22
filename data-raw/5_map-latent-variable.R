@@ -1,8 +1,7 @@
 # ---------------
-# Prepare baselayers for mapping
+# Create map and estimate area affected.
 # ---------------
-# CJ Brown 16 Jun 2017
-# This version just uses inverse probit transform
+# CJ Brown 23 Jan 2018
 
 rm(list = ls())
 library(devtools)

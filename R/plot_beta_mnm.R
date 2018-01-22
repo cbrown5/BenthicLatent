@@ -21,11 +21,11 @@ plot_beta_mnm <- function(smc,  habnams, xlim = NULL, xlab = '', ylab = ''){
 		}
 
 	plot(vhab[iord], sppnums, yaxt = 'n', bty = 'n',
-	 xlim = xlim, ylab = ylab, xlab = xlab, pch = 16, col = grey(0.5, 1),
-	 cex =0.7)
+	 xlim = xlim, ylab = ylab, xlab = xlab, pch = 16, col = "black",
+	 cex =0.9)
 	abline(v=0)
 	arrows(x0 = smc$quantiles[ihab[iord],1], y0=sppnums,
-	 x1 = smc$quantiles[ihab[iord],5], y1=sppnums, len = 0, col = grey(0.5, 0.5), lwd = 2)
+	 x1 = smc$quantiles[ihab[iord],5], y1=sppnums, len = 0, col = grey(0, 0.5), lwd = 1.5)
 	xy <- axis(2, at = sppnums, labels = NA, las=1)
 	text(xlim[1]*1.1, xy, habnams[iord], srt = 35, cex = 0.8, xpd = NA, pos=2)
 	return(iord)

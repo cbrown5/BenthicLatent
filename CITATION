@@ -1,0 +1,7 @@
+bibentry(bibtype = "Article",
+         title = "Estimating the footprint of pollution on coral reefs with models of species turn-over",
+         author = c(person("Christopher", "Brown"),
+                    person("Richard", "Hamilton")),
+        journal = {"Conservation Biology"},
+         year = 2018,
+         url = "http://onlinelibrary.wiley.com/doi/10.1111/cobi.13079/abstract")

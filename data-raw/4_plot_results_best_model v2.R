@@ -27,6 +27,13 @@ setwd('/Users/s2973410/Code/BenthicLatent/data-raw')
 
 num_levels <- 2
 savname <- paste0('BLM_numlv', num_levels,'_v3.RData')
+
+# ---------------
+# Model diagram
+# ---------------
+dev.new(width = 7, height = 6.3)
+create_model_diagram()
+
 # ---------- #
 # HABITAT LOADINGS PLOT
 # ---------- #
