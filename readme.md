@@ -3,8 +3,7 @@ Estimating the footprint of pollution on coral reefs with models of species turn
 2018-01-23
 
 Code in support of
-[Brown, Hamilton. 2018. Estimating the footprint of pollution on coral reefs with models of species turnover. Conservation Biology. DOI: 10.1111/cobi.13079]
-(http://onlinelibrary.wiley.com/doi/10.1111/cobi.13079/abstract)
+[Brown, Hamilton. 2018. Estimating the footprint of pollution on coral reefs with models of species turnover. Conservation Biology. DOI: 10.1111/cobi.13079](http://onlinelibrary.wiley.com/doi/10.1111/cobi.13079/abstract)
 
 For an open-access pre-print see:
 Brown, Hamilton. 2017. Estimating the footprint of pollution on coral reefs using models of species turn-over. doi: https://doi.org/10.1101/157297
